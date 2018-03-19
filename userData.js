@@ -13,6 +13,14 @@ function Users()
 				return allUsers[i];
 		return null;
 	};
+	this.findUserIndex = function(username){
+		for(let i=0;i<allUsers.length;i++)
+			if(allUsers[i].getName() === username)
+				return i;
+	};
+	this.deleteUser = function(username, password) {
+		this.allUsers.splice(findUserIndex(username), 1);
+	};
 
 	return this;
 }
