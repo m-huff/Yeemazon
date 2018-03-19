@@ -14,6 +14,11 @@ router.get("/session",function(request,response){
 	response.sendFile(__dirname + "/public/views/session.html");
 });
 
+router.get("/session:name:password",function(request,response){
+	//send file, get username and password
+
+});
+
 var UserData = new (require("./userModule")) ();
 
 UserData.addUser("admin", "password");
@@ -22,29 +27,14 @@ UserData.addUser("admin", "password");
 router.get("/userInfo",function(request,response){
 	var username = request.query.username;
 	var user = UserData.findReturnUser(username);
-	response.json((user) ? user : {error:"User does not exist!"});
+	response.json((user) ? {username:user.getName(), password : user.getPassword()} : {error:"User does not exist!"});
 });
 
 
 router.post("/login", function(req, res){
 	var user = UserData.findReturnUser(req.body.username);
 	var status = user ? (user.getPassword() === req.body.password ? "Success" : "Incorrect") : "Not";
-	switch(status)
-	{
-		case "Success":
-			
-			break;
-		case "Incorrect":
-			
-			break;
-		case "Not":
-			
-			break;
-		case default:
-			
-			break;
-	}
-
+	res.json(status);
 	//redirect to session and ask them to get userInfo
 });
 
