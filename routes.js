@@ -27,21 +27,9 @@ router.get("/userInfo",function(request,response){
 		response.json({redirect:"/"})
 	console.log("Userinfo requested");
 });
-
-router.post("/login", function(req, res){
-	console.log("Login check");
-	var ip = getIP(req);
-	var user = UserData.findReturnUser(req.body.username);
-	var status = user ? (user.getPassword() === req.body.password ? "Success" : "Incorrect") : "Not";
-	if(status === "Success")
-	{
-		loggers[loggers.length] = [user, ip];
-		res.json({redirect:"/session"});
-	}
-	else
-		res.json(status);
-	console.log("User: " + user.username + " IP: " + ip + " has logged in");
-});
+var tryers = [];
+var banned = [];
+router.post("/login", loginAttempt);
 
 
 router.post("/signup", function(req, res){
@@ -63,5 +51,68 @@ function getUserfromIP(request)
 			user = loggers[i][0];
 	return user;
 }
+
+function loginAttempt(req, res)
+{
+	
+	var ip = getIP(req), user = UserData.findReturnUser(req.body.username);
+
+	if(bannedCheck(ip))
+	{
+		res.json({status:"Banned"});
+		return;
+	}
+	
+
+	console.log("Login check for " + ip);
+
+	var status = user ? (user.getPassword() === req.body.password ? "Success" : "Incorrect") : "Username not found";
+	if(status === "Success")
+	{
+		loggers[loggers.length] = [user, ip];
+		res.json({redirect:"/session"});
+		console.log("User: " + user.username + " has logged in on IP: " + ip);
+	}
+	else if(status === "Incorrect")
+		res.json(incorrectAttempt(res, "Incorrect", ip));
+	else
+		res.json({status:status});
+	
+}
+function bannedCheck(ip)
+{
+	for (var i = 0; i < banned.length; i++) 
+		if(ip === banned[i])
+			return true;
+	return false;
+}
+function incorrectAttempt(res, status, ip)
+{
+	var found = false, index = 0;
+	for(let i=0;i<tryers.length;i++)
+		if(ip===tryers[i][0])
+		{
+			if(tryers[i][1] - 1 > 0)
+				tryers[i][1]--;
+			else {
+				console.log("Login attempts reached for " + ip);
+				banned[banned.length] = ip;
+				return {status:"Locked out"};
+			}
+			found = true;
+			index = i;
+			break;
+		}
+	var remaining = (found) ? tryers[index][1] : (tryers[tryers.length] = [ip, 5])[1];
+	return {status:status, attempts:remaining};
+}
+
+
+
+
+
+
+
+
 module.exports = router;
 
