@@ -5,8 +5,7 @@ function Users(username, password)
 	this.allUsers = [];
 
 	this.addUser = function(username, password) {
-		this.allUsers[this.allUsers.length] = new (require("./UserModule")) (username, password);
-		return true;
+		return this.allUsers[this.allUsers.length] = new (require("./UserModule")) (username, password);
 	};
 	this.addUser(username, password);
 	this.findReturnUser = function(username) {
