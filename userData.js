@@ -1,6 +1,7 @@
-var user = new (require("./User")) ();
+
 function Users()
 {
+	var user = new (require("./UserModule")) ();
 	this.allUsers = [];
 
 	this.addUser = function(username, password) {
@@ -29,4 +30,4 @@ function Users()
 	return this;
 }
 
-module.exports = User;
+module.exports = Users;

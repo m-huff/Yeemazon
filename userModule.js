@@ -1,7 +1,5 @@
 function User(username, password)
 {
-	if(isNaN(username)&&isNaN(password))
-		return this;
 	this.username = username;
 	this.password = password;
 
@@ -17,7 +15,6 @@ function User(username, password)
 	this.setPassword = function(newPassword){
 		return (this.password = newPassword);
 	};
-
 	return this;
 }
 module.exports = User;

@@ -16,9 +16,8 @@ router.get("/session/:name:password",function(request,response){
 
 });
 
-var UserData = new (require("./userModule")) ();
+var UserData = new (require("./userData")) ("admin", "password");
 
-UserData.addUser("admin", "password");
 
 var loggers = [];
 
