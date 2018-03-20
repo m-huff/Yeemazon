@@ -41,6 +41,7 @@ router.get("/login",function(request,response){
 
 router.post("/login", function(req, res){
 	console.log("Login check");
+	var ip = getIP(req);
 	var user = UserData.findReturnUser(req.body.username);
 	var status = user ? (user.getPassword() === req.body.password ? "Success" : "Incorrect") : "Not";
 	if(status === "Success")
