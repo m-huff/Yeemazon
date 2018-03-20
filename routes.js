@@ -2,9 +2,7 @@
 var express = require("express");
 var router = express.Router();
 
-router.get("/login",function(request,response){
-	response.sendFile(__dirname + "/public/views/login.html");
-});
+
 
 router.get("/signup",function(request,response){
 	response.sendFile(__dirname + "/public/views/signup.html");
@@ -14,8 +12,7 @@ router.get("/session",function(request,response){
 	response.sendFile(__dirname + "/public/views/session.html");
 });
 
-router.get("/session:name:password",function(request,response){
-	//send file, get username and password
+router.get("/session/:name:password",function(request,response){
 
 });
 
@@ -23,17 +20,32 @@ var UserData = new (require("./userModule")) ();
 
 UserData.addUser("admin", "password");
 
+var loggers = [];
+
 
 router.get("/userInfo",function(request,response){
-	var username = request.query.username;
-	var user = UserData.findReturnUser(username);
-	response.json((user) ? {username:user.getName(), password : user.getPassword()} : {error:"User does not exist!"});
+	var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+	var user;
+	for(let i = 0; i < loggers.length;i++)
+		if(loggers[i][1] === ip)
+			user = loggers[i][0];
+	
+	if(user)
+		response.json({username:user.getName(), password : user.getPassword()});
+	else
+		next();
 });
 
+router.get("/login",function(request,response){
+	response.sendFile(__dirname + "/public/views/login.html");
+});
 
 router.post("/login", function(req, res){
+	var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 	var user = UserData.findReturnUser(req.body.username);
 	var status = user ? (user.getPassword() === req.body.password ? "Success" : "Incorrect") : "Not";
+	if(status === "Success")
+		loggers[loggers.length] = [user, ip];
 	res.json(status);
 	//redirect to session and ask them to get userInfo
 });
