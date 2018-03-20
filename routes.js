@@ -33,6 +33,7 @@ router.get("/userInfo",function(request,response){
 		response.json({username:user.getName(), password : user.getPassword()});
 	else
 		next();
+	console.log("Userinfo requested");
 });
 
 router.get("/login",function(request,response){
@@ -40,12 +41,15 @@ router.get("/login",function(request,response){
 });
 
 router.post("/login", function(req, res){
+	console.log("Login request");
 	var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 	var user = UserData.findReturnUser(req.body.username);
 	var status = user ? (user.getPassword() === req.body.password ? "Success" : "Incorrect") : "Not";
 	if(status === "Success")
 		loggers[loggers.length] = [user, ip];
 	res.json(status);
+	console.log(user.username + " ip: " + ip);
+
 	//redirect to session and ask them to get userInfo
 });
 

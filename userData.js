@@ -1,22 +1,23 @@
 
-function Users()
+function Users(username, password)
 {
 	var user = new (require("./UserModule")) ();
 	this.allUsers = [];
 
 	this.addUser = function(username, password) {
-		this.allUsers[this.allUsers.length] = new user(username, password);
+		this.allUsers[this.allUsers.length] = new (require("./UserModule")) (username, password);
 		return true;
 	};
+	this.addUser(username, password);
 	this.findReturnUser = function(username) {
-		for(let i=0;i<allUsers.length;i++)
-			if(allUsers[i].getName() === username)
-				return allUsers[i];
+		for(let i=0;i<this.allUsers.length;i++)
+			if(this.allUsers[i].getName() === username)
+				return this.allUsers[i];
 		return null;
 	};
 	this.findUserIndex = function(username){
-		for(let i=0;i<allUsers.length;i++)
-			if(allUsers[i].getName() === username)
+		for(let i=0;i<this.allUsers.length;i++)
+			if(this.allUsers[i].getName() === username)
 				return i;
 	};
 	this.deleteUser = function(username, password) {
