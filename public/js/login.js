@@ -10,10 +10,10 @@ function sendLogin()
 }
 function redirect(data)
 {
-	if(data.error)
-		$("#message").val(data.error);
+	if(data.status)
+		alert(data.status);
 	else
-		window.location.replace("http://localhost:3000/session");
+		window.location = window.location.href.split("/")[0] + data.redirect;
 }
 $(document).ready(function(){ 
 	$("#request").click(sendLogin);
