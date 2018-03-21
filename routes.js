@@ -86,6 +86,7 @@ function loginAttempt(req, res)
 	{
 		loggers[loggers.length] = [user, ip];
 		res.json({redirect:"/session"});
+		console.log("User: " + user.username + " has logged in on IP: " + ip);
 	}
 	else if(status === "Incorrect")
 		res.json(incorrectAttempt(res, "Incorrect", ip));
