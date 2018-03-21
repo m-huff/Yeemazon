@@ -15,6 +15,11 @@ function redirect(data)
 	else
 		window.location = window.location.href.split("/")[0] + data.redirect;
 }
+function sendSignup()
+{
+	window.location = window.location.href.split("/")[0] + "/signup";
+}
 $(document).ready(function(){ 
 	$("#request").click(sendLogin);
+	$("#signup").click(sendSignup);
 });

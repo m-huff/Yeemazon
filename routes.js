@@ -18,6 +18,12 @@ router.get("/signup",function(request,response){
 var UserData = new (require("./userData")) ("admin", "password");
 var loggers = [];
 
+var items = [];
+
+router.get("/info", function(req, res){
+	var user = getUserfromIP(getIP(req));
+	res.json((user ? {items:items} : {error:"You do not exist yet"} ));
+});
 
 router.get("/userInfo",function(request,response){
 	var user = getUserfromIP(request);
@@ -32,16 +38,6 @@ router.get("/login",function(request,response){
 	response.sendFile(__dirname + "/public/views/login.html");
 });
 
-router.post("/login", function(req, res){
-	console.log("Login check");
-	var ip = getIP(req);
-	var user = UserData.findReturnUser(req.body.username);
-	var status = user ? (user.getPassword() === req.body.password ? "Success" : "Incorrect") : "Not";
-	if(status === "Success")
-		loggers[loggers.length] = [user, ip];
-	res.json(status);
-	console.log("User: " + user.username + " IP: " + ip + " has logged in");
-});
 var tryers = [];
 var banned = [];
 router.post("/login", loginAttempt);
@@ -51,7 +47,7 @@ router.post("/signup", function(req, res){
 	var ip = getIP(req);
 	var user = UserData.addUser(req.body.username, req.body.password);
 	loggers[loggers.length] = [user, ip];
-	res.json({status: (user)});
+	res.json({redirect: "/session"});
 });
 function getIP(request)
 {
@@ -77,7 +73,6 @@ function loginAttempt(req, res)
 		res.json({status:"Banned"});
 		return;
 	}
-	
 
 	console.log("Login check for " + ip);
 
