@@ -2,21 +2,13 @@
 <!--   -->
 <html>
   <head>
-    <title>Yeemazon.com</title>
+    <title>Yeemazon - Login</title>
     <meta charset="utf-8"/>
+    <link rel="stylesheet" href="master_style.css">
     <style type="text/css">
-      body {background-image: url('https://stormandsky.com/gif/14.gif');background-size: cover;}
-      label {font-family:"tahoma";color:#DDDDDD;font-weight:bold;text-shadow: 3px 3px 6px #000000;transition: .3s}
-      label:hover {color:#FFFFFF;font-weight:bold;text-shadow: 3px 3px 6px #DDDDDD}
-      h1 {font-family:"tahoma";font-size:102px;color:#DDDDDD;transition: .3s}
-      input {width: 300px;height: 50px;text-align:center;font-size:24px;background-color:#DDDDDD;font-weight:bold;}
-      button {font-weight:bold;border:0;text-align: center;overflow:hidden;transition: .3s;background-color: #dddddd;width: 100px;height:25px;text-align: center;text-decoration: none;overflow: hidden;}
-      button:hover{background:#fff;box-shadow:0px 0px 10px 5px #97B1BF;color:#000;}
-      button:after {content: "";background: #f1c40f;display: block;position: absolute;margin-left: -20px;opacity: 0;}
-      button:active:after {padding: 0;margin: 0;opacity: 1;}
-      #loginBox {text-align:center;margin:0 auto;background: rgba(30,30,30, 0.7);width:350px;height:330px;border-radius:10px}
-      #header {text-align:center;margin:0 auto;text-shadow: 5px 5px 10px #000000;}
-      #header:hover {color:#DDDDDD;text-shadow: 10px 10px 20px #000000}
+
+      h1 {font-size:102px;}
+      #loginBox {height:330px;}
       #signup {width: 100px;height:25px}
       #request {width: 200px;height:30px}
 
@@ -25,9 +17,9 @@
   </head>
   
   <body>  
-    <div style="margin-top: 200px"></div>
+    <div style="margin-top: 10%"></div>
 
-    <h1 id="header">Yeemazon</h1>
+    <h1 id="header" class="loginHeader">Yeemazon</h1>
     <div style="margin-top: 50px"></div>
 
     <div id="loginBox">
@@ -35,20 +27,20 @@
       <label>Username</label>
       <div style="margin-top: 10px"></div>
 
-      <input id="username" type="text">
+      <input id="username" type="text" class="loginInput">
       <div style="margin-top: 30px"></div>
 
       <label>Password</label>
       <div style="margin-top: 10px"></div>
 
-      <input id="password" type="password">
+      <input id="password" type="password" class="loginInput">
       <div style="margin-top: 25px"></div>
 
-      <button id="request">Log In</button>
+      <button id="request" class="request">Log In</button>
       <div style="margin-top: 20px"></div>
 
       <label>Don't have an account?</label>
-      <button id="signup">Sign up!</button>
+      <button id="signup" class="request">Sign up!</button>
       <div style="margin-top: 10px"></div>
     </div>
 

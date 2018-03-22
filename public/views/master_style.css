@@ -1,0 +1,37 @@
+/*GENERAL STYLE*/
+
+body {background-image: url('background.gif');background-size: cover;}
+label {font-family:"tahoma";color:#DDDDDD;font-weight:bold;text-shadow: 3px 3px 6px #000000;transition: .3s;}
+label:hover {color:#FFFFFF;font-weight:bold;text-shadow: 3px 3px 6px #DDDDDD}
+h1 {font-family:"tahoma";color:#DDDDDD;transition: .3s}
+h2 {font-family:"tahoma";color:#DDDDDD;transition: .3s}
+
+/*SPECIFIC LOGIN ELEMENTS STYLE*/
+
+.request {font-weight:bold;border:0;text-align: center;overflow:hidden;transition: .3s;background-color: #dddddd;text-decoration: none;overflow: hidden;border-radius:4px}
+.request:active:after {padding: 0;margin: 0;opacity: 1;}
+.request:hover{background:#fff;box-shadow:0px 0px 10px 5px #97B1BF;color:#000;}
+.request:after {content: "";background: #f1c40f;display: block;position: absolute;margin-left: -20px;opacity: 0;}
+
+.loginInput {width: 300px;height: 50px;text-align:center;font-size:24px;background-color:#DDDDDD;font-weight:bold;}
+
+#loginBox {text-align:center;margin:0 auto;background: rgba(30,30,30, 0.7);width:350px;border-radius:10px}
+
+.loginHeader {text-align:center;margin:0 auto;text-shadow: 5px 5px 10px #000000;}
+.loginHeader:hover {text-shadow: 10px 10px 20px #000000}
+
+/*SESSION HOME PAGE SPECIFIC ELEMENTS STYLE*/
+
+.toolbarButton {background-color: Transparent;background-repeat:no-repeat;border: none;cursor:pointer;overflow: hidden;outline:none;font-family:"tahoma";color:#DDDDDD;font-weight:bold;text-shadow: 3px 3px 6px #000000;transition: .3s;}
+.toolbarButton:hover {color:#FFFFFF;font-weight:bold;text-shadow: 3px 3px 6px #DDDDDD}
+
+#userGreeting {text-align:left;margin:0 auto;text-shadow:5px 5px 10px #000000;color:#DDDDDD;transition: .3s;}
+#userGreeting:hover {text-shadow: 10px 10px 20px #000000}
+
+#toolbar {margin:0 auto;background: rgba(75,75,75, 1);width:95%;height:22px;border-radius:10px;text-align:center;vertical-align: middle}
+#pageback {margin:0 auto;background:#AAAAAA;opacity:0.99;width:95%;height:800px;border-radius:10px;text-align:center;}
+
+.itemHolder {width:100%;height:15%;background-color:#EEEEEE;margin:0 auto;text-align:center;}
+
+.itemLabel {text-align:left;margin:0 auto;text-shadow: 5px 5px 10px #000000;}
+.itemLabel:hover {text-shadow: 10px 10px 20px #000000}
