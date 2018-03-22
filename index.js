@@ -11,6 +11,7 @@ app.use(bodyParser.json());
 
 app.use('/', express.static('./'));
 app.use('/views', express.static('./public/views'));
+app.use('/css', express.static('./public/css'));
 app.use('/js', express.static('./public/js'));
 app.use(routes);
 

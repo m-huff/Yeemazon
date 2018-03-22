@@ -4,7 +4,7 @@ function sendLogin()
             url:"/login", 
             type:"POST", 
             data: {username:$("#username").val(), password:$("#password").val()}, 
-            success: redirect, 
+            success: redirect,
             dataType : "json"
         });
 }

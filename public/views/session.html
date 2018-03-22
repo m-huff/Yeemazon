@@ -18,19 +18,23 @@
   <body>  
 
     <div style="margin-top: 30px"></div>
-    <h1 id="userGreeting">Hello %username%!</h1>
+    <h1 id="userGreeting" style="margin-left:2.5%">Hello %username%!</h1>
     <div style="margin-top: 20px"></div>
 
     <div id="toolbar">
-      <input id="search" type="text" value="Search for an item">
+      <input id="search" type="text" value="Search for an item" text-align="middle" style="margin-right:5px;margin-left:15px">
       <button id="request" class="request">Go</button>
-      <button id="account" style="margin-left:64%" class="toolbarButton">Your Account</button>
-      <button id="orders" class="toolbarButton">Your Orders</button>
+      <button id="account" style="margin-left:70%;" class="toolbarButton">Account</button>
+      <button id="orders" class="toolbarButton">Orders</button>
+      <button id="cart" class="toolbarButton">Cart (0)</button>
       <button id="logout" class="toolbarButton">Log Out</button>
     </div>
 
     <div id="pageback">
+      <h2 class="itemLabel">Popular Items</h2>
+      <div class="itemHolder">
 
+      </div>  
     </div>
 
 
