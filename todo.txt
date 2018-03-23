@@ -5,5 +5,12 @@ Secret-Key: 6LfhUk4UAAAAAEf3g2FRVkhLt75ikTv66-iufaMW
 
 <div class="g-recaptcha" data-sitekey="6LfhUk4UAAAAACFLoT8YhRJxxtEJuamEWGQXNhfb"></div>
 
-
+todo
+1. User sessions and uniqueIDs
 https://github.com/expressjs/session
+
+2. RSA encryption for symmetric keys
+https://github.com/rzcoder/node-rsa
+
+3. AES for the symmetric key generation
+https://www.npmjs.com/package/node-cryptojs-aes
