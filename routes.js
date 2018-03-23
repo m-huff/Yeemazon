@@ -7,12 +7,6 @@ const request = require('request');
 router.get("/",handler);
 router.get("/login",handler);
 router.get("/session",handler);
-router.get("/master_style.css",(req, res) => {
-	res.sendFile(__dirname + "\\public\\css\\master_style.css");
-});
-router.get("/background.gif",(req, res) => {
-	res.sendFile(__dirname + "\\public\\css\\background.gif");
-});
 
 function handler(req, res)
 {
