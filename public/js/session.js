@@ -1,5 +1,10 @@
 $(document).ready(function(){
 	$.get("/userInfo", success);
+	$("#logout").click(() => {
+		$.post("/logout", (data) => {
+			window.location = window.location.href.split("/")[0] + data.redirect;
+		});
+	});
 });
 var username, password;
 function success(data)

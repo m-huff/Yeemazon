@@ -60,6 +60,8 @@ router.post("/login", loginAttempt);
 
 router.post("/signup", function(req, res){
 	var ip = getIP(req);
+	if(getUserfromIP(req) !== undefined)
+		return res.json({success:false, status: "You are currently logged in, please sign out first"});
 
 	if(!req.body.captcha)
 		return res.json({success:false, status:"Please select captcha"});
@@ -80,15 +82,7 @@ router.post("/signup", function(req, res){
 	var user = UserData.addUser(req.body.username, req.body.password);
 
 	loggers[loggers.length] = [user, ip];
-	res.json({redirect: "/session"});
-});
-router.get("/logout", function(req, res){
-	var ip = getIP(req);
-	var user = getUserfromIP(req);
-	for(let i=0;i<loggers.length;i++)
-		if(loggers[i][1] === ip)
-			loggers.splice(i, 1);
-	res.json({redirect: "/"});
+	return res.json({redirect: "/session"});
 });
 router.post("/logout", function(req, res){
 	var ip = getIP(req);
@@ -96,7 +90,7 @@ router.post("/logout", function(req, res){
 	for(let i=0;i<loggers.length;i++)
 		if(loggers[i][1] === ip)
 			loggers.splice(i, 1);
-	res.json({redirect: "/"});
+	return res.json({redirect: "/"});
 });
 
 function getIP(req)
