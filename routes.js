@@ -73,7 +73,12 @@ router.post("/signup", function(req, res){
 			return res.json({success:false, status:"Failed captcha"});
 	});
 
+	if(req.body.username.includes("<")||req.body.username.includes(">"))
+		return res.json({success:false, status:"Invalid Username"});
+	if(req.body.password.includes("<")||req.body.password.includes(">"))
+		return res.json({success:false, status:"Invalid password"});
 	var user = UserData.addUser(req.body.username, req.body.password);
+
 	loggers[loggers.length] = [user, ip];
 	res.json({redirect: "/session"});
 });
@@ -121,6 +126,11 @@ function loginAttempt(req, res)
 
 	console.log("Login check for " + ip);
 
+	if(req.body.username.includes("<")||req.body.username.includes(">"))
+		return res.json({success:false, status:"Invalid Username"});
+	if(req.body.password.includes("<")||req.body.password.includes(">"))
+		return res.json({success:false, status:"Invalid password"});
+	
 	var status = user ? (user.getPassword() === req.body.password ? "Success" : "Incorrect") : "Username not found";
 	if(status === "Success")
 	{

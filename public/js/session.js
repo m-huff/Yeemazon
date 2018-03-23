@@ -6,6 +6,6 @@ function success(data)
 {
 	username = data.username;
 	password = data.password;
-	$("username").val(username);
-	$("password").val(password);
+	$("#userGreeting").html("Hello " + username + "!");
+	$("#password").html(password);
 }
