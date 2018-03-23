@@ -14,6 +14,7 @@
 
     </style>
     <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
   </head>
   
   <body>  
@@ -28,15 +29,19 @@
       <label>Choose a username</label>
       <div style="margin-top: 10px"></div>
 
-      <input id="username" type="text" class="loginInput">
+      <input id="username" name = "username" type="text" class="loginInput">
       <div style="margin-top: 30px"></div>
 
       <label>Choose a password (hidden)</label>
       <div style="margin-top: 10px"></div>
 
-      <input id="password" type="password" class="loginInput">
+      <input id="password" name = "password" type="password" class="loginInput">
       <div style="margin-top: 20px"></div>
-      <button id="request" class="request">Sign up!</button>
+
+      <div class="g-recaptcha" data-sitekey="6LfhUk4UAAAAACFLoT8YhRJxxtEJuamEWGQXNhfb"></div>
+      <div style="margin-top: 20px"></div>
+
+      <button id="request" class="request" type = "submit">Sign up!</button>
     </div>
 
     <script src="js/signup.js"></script>

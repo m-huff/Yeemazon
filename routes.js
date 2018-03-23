@@ -2,6 +2,8 @@
 var express = require("express");
 var router = express.Router();
 
+const request = require('request');
+
 router.get("/",handler);
 router.get("/login",handler);
 router.get("/session",handler);
@@ -59,7 +61,17 @@ router.post("/login", loginAttempt);
 router.post("/signup", function(req, res){
 	var ip = getIP(req);
 
+	if(!req.body.captcha)
+		return res.json({success:false, status:"Please select captcha"});
 
+	const key = '6LfhUk4UAAAAAEf3g2FRVkhLt75ikTv66-iufaMW';
+	const verify = `https://google.com/recaptcha/api/siteverify?secret=${key}&response=${req.body.captcha}&remoteip=${ip}`;
+
+	request(verify, (err, response, body) => {
+		body = JSON.parse(body);
+		if(body.success !== undefined && !body.success)
+			return res.json({success:false, status:"Failed captcha"});
+	});
 
 	var user = UserData.addUser(req.body.username, req.body.password);
 	loggers[loggers.length] = [user, ip];
