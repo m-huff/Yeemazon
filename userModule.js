@@ -1,6 +1,7 @@
-function User(username, password)
+function User(username, email, password)
 {
 	this.username = username;
+	this.email = email;
 	this.password = password;
 
 	this.getName = function(){
@@ -14,6 +15,20 @@ function User(username, password)
 	};
 	this.setPassword = function(newPassword){
 		return (this.password = newPassword);
+	};
+
+	this.myIPs = [];
+	this.getmyIPs = function() {
+		return this.myIPs;
+	};
+	this.addIP = function(ip) {
+		this.myIPs[this.myIPs.length] = ip;
+	};
+	this.IPExists = function(ip) {
+		for(let i=0;i<this.myIPs.length;i++)
+			if(ip === this.myIPs[i])
+				return true;
+		return false;
 	};
 	return this;
 }

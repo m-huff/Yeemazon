@@ -1,13 +1,13 @@
 
-function Users(username, password)
+function Users(username, email, password)
 {
 	var user = new (require("./UserModule")) ();
 	this.allUsers = [];
 
-	this.addUser = function(username, password) {
-		return this.allUsers[this.allUsers.length] = new (require("./UserModule")) (username, password);
+	this.addUser = function(username, email, password) {
+		return this.allUsers[this.allUsers.length] = new (require("./UserModule")) (username, email, password);
 	};
-	this.addUser(username, password);
+	this.addUser(username, email, password);
 	this.findReturnUser = function(username) {
 		for(let i=0;i<this.allUsers.length;i++)
 			if(this.allUsers[i].getName() === username)

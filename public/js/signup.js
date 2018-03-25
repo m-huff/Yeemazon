@@ -3,7 +3,7 @@ function sendLogin()
 	$.ajax({
             url:"/signup", 
             type:"POST", 
-            data: {username:$("#username").val(), password:$("#password").val(), captcha:$("#g-recaptcha-response").val()}, 
+            data: {username:$("#username").val(), email:$("#email").val(), password:$("#password").val(), captcha:$("#g-recaptcha-response").val()}, 
             success: redirect, 
             dataType : "json"
         });
