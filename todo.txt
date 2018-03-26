@@ -5,12 +5,21 @@ Secret-Key: 6LfhUk4UAAAAAEf3g2FRVkhLt75ikTv66-iufaMW
 
 <div class="g-recaptcha" data-sitekey="6LfhUk4UAAAAACFLoT8YhRJxxtEJuamEWGQXNhfb"></div>
 
-todo
-1. User sessions and uniqueIDs
-https://github.com/expressjs/session
+todo by Friday 3/26/2018
+1. Fix weird undefined cookie bug //Wednesday
 
-2. RSA encryption for symmetric keys
-https://github.com/rzcoder/node-rsa
+2. Add admin permissions //Wednesday
 
-3. AES for the symmetric key generation
-https://www.npmjs.com/package/node-cryptojs-aes
+3. Add items and display them //Tuesday
+
+4. Add an itemView html page //Tuesday
+
+5. Admins have a create button to add a new item to the website //Tuesday
+
+Thursday
+
+1. Search for any bugs on the website and fix them
+
+2. Test the server on a different computer and see if it works
+
+3. Make sure there arent any noticable bugs
