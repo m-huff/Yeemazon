@@ -6,6 +6,9 @@ const request = require('request');
 var clientSessions = require('client-sessions');
 const uuidv4 = require('uuid/v4');
 
+var bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 router.get("/",handler);
 router.get("/login",handler);
 router.get("/session",handler);
@@ -19,7 +22,8 @@ router.get("/signup",function(req,res){
 	res.sendFile(__dirname + "/public/views/signup.html");
 });
 
-var UserData = new (require("./userData")) ("admin", "costa.vincent132@gmail.com", "password");
+var UserData = new (require("./userData")) ("admin", "costa.vincent132@gmail.com", bcrypt.hashSync("password", saltRounds));
+
 var loggers = [];
 var verificationKeys = [];
 
@@ -37,7 +41,6 @@ router.get("/verify", function(req, res){
 		{
 			var user = verificationKeys[i][1];
 			UserData.findReturnUser(user.getName()).addIP(verificationKeys[i][2]);
-			console.log(user.getmyIPs());
 			console.log("Correct code");
 			loggers[loggers.length] = [user, verificationKeys[i][2]];
 		}
@@ -92,7 +95,12 @@ router.post("/signup", function(req, res){
 	req.session_state.password = req.body.password;
 	req.session_state.active = true;
 
-	var user = UserData.addUser(req.body.username, req.body.email, req.body.password);
+	var hashed;
+	bcrypt.hash(req.body.password, saltRounds, function(err, hash){
+		hashed = hash;
+	});
+	console.log(hashed);
+	var user = UserData.addUser(req.body.username, req.body.email, hashed);
 	user.addIP(ip);
 	console.log(user.myIPs);
 
@@ -134,12 +142,17 @@ function loginAttempt(req, res)
 
 	console.log("Login check for " + ip);
 
-	
 	var check;
 	if(check = checkForBug(req))
 		return res.json(check);
-	console.log(user.getPassword());
-	var status = user ? (user.getPassword() === req.body.password ? "Success" : "Incorrect") : "Username not found";
+
+	var status;
+	if(user)
+	{
+		status = (bcrypt.compareSync(req.body.password, user.getPassword())) ? "Success" : "Incorrect";
+	}
+	else
+		status = "Username not found";
 	if(status === "Success")
 	{
 		if(user.IPExists(ip))

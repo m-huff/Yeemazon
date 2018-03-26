@@ -1,0 +1,30 @@
+{
+  "name": "yeemazon",
+  "version": "1.0.0",
+  "description": "Clone of Amazon, name inspired by Mr. Yee",
+  "main": "index.js",
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "client-sessions": "^0.8.0",
+    "express": "^4.16.3",
+    "gyp": "^0.5.0",
+    "nan": "^2.10.0",
+    "node-pre-gyp": "^0.9.0",
+    "request": "^2.85.0",
+    "uuid": "^3.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VincentCosta6/Yeemazon.git"
+  },
+  "author": "Vincent Costa",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/VincentCosta6/Yeemazon/issues"
+  },
+  "homepage": "https://github.com/VincentCosta6/Yeemazon#readme"
+}
