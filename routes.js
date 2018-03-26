@@ -105,10 +105,7 @@ router.post("/signup", function(req, res){
 	req.session_state.password = req.body.password;
 	req.session_state.active = true;
 
-	var hashed;
-	bcrypt.hash(req.body.password, saltRounds, function(err, hash){
-		hashed = hash;
-	});
+	var hashed = bcrypt.hashSync(req.body.password, saltRounds);
 	console.log(hashed);
 	var user = UserData.addUser(req.body.username, req.body.email, hashed);
 	user.addIP(ip);
