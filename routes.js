@@ -5,6 +5,7 @@ var router = express.Router();
 const request = require('request');
 var clientSessions = require('client-sessions');
 const uuidv4 = require('uuid/v4');
+var nodemailer = require('nodemailer');
 
 var bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -17,7 +18,16 @@ function handler(req, res)
 {
 	res.sendFile(__dirname + ("\\public\\views\\" + ((req.session_state.active) ? "session.html" : "login.html")));
 }
-
+var transporter = nodemailer.createTransport({
+ service: 'gmail',
+ auth: {
+        user: 'yeemazon@gmail.com',
+        pass: 'Whynotyo'
+    },
+ tls: {
+    rejectUnauthorized: false
+}
+});
 router.get("/signup",function(req,res){
 	res.sendFile(__dirname + "/public/views/signup.html");
 });
@@ -169,8 +179,24 @@ function loginAttempt(req, res)
 		{
 			var key = uuidv4();
 			verificationKeys[verificationKeys.length] = [key, user, ip];
+			console.log(req.body.ref);
+
+			var link = "http://" + req.body.ref + "/verify?code=" + key;
+			const mailOptions = {
+			  from: 'yeemazon@gmail.com', // sender address
+			  to: user.email, // list of receivers
+			  subject: 'IP Verification link', // Subject line
+			  html: '<a href="' + link + '">Click here  to verify</a>'// plain text body
+			};
+
 			res.json({status:"You are accessing this account from a new IP, a verification has been sent to your email"});
 			console.log("Verification email has been sent to " + user.email + " code: " + key);
+			transporter.sendMail(mailOptions, function (err, info) {
+			   if(err)
+			     console.log(err)
+			   else
+			     console.log(info);
+			});
 		}
 		
 	}
