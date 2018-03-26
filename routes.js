@@ -53,7 +53,9 @@ router.get("/verify", function(req, res){
 			UserData.findReturnUser(user.getName()).addIP(verificationKeys[i][2]);
 			console.log("Correct code");
 			loggers[loggers.length] = [user, verificationKeys[i][2]];
+			return res.sendFile(__dirname + "\\public\\views\\login.html");
 		}
+	return res.json({error:"Code is invalid or has expired!"});
 });
 
 router.get("/getItemInfo", function(req, res){
@@ -174,26 +176,30 @@ function loginAttempt(req, res)
 		}
 		else
 		{
-			var key = uuidv4();
-			verificationKeys[verificationKeys.length] = [key, user, ip];
-			console.log(req.body.ref);
+			if(verificationExists(user.getName()))
+			{
+				return res.json({status:"An email to verify your ip has already been sent"});
+			}
+			else
+			{
+				var key = uuidv4();
+				verificationKeys[verificationKeys.length] = [key, user, ip];
+				console.log(req.body.ref);
 
-			var link = "http://" + req.body.ref + "/verify?code=" + key;
-			const mailOptions = {
-			  from: 'yeemazon@gmail.com', // sender address
-			  to: user.email, // list of receivers
-			  subject: 'IP Verification link', // Subject line
-			  html: '<a href="' + link + '">Click here  to verify</a>'// plain text body
-			};
+				var link = "http://" + req.body.ref + "/verify?code=" + key;
+				const mailOptions = {
+				  from: 'yeemazon@gmail.com', // sender address
+				  to: user.email, // list of receivers
+				  subject: 'IP Verification link', // Subject line
+				  html: '<a href="' + link + '">Click here  to verify</a>'// plain text body
+				};
 
-			res.json({status:"You are accessing this account from a new IP, a verification has been sent to your email"});
-			console.log("Verification email has been sent to " + user.email + " code: " + key);
-			transporter.sendMail(mailOptions, function (err, info) {
-			   if(err)
-			     console.log(err)
-			   else
-			     console.log(info);
-			});
+				res.json({status:"You are accessing this account from a new IP, a verification has been sent to your email"});
+				console.log("Verification email has been sent to " + user.email + " code: " + key);
+				transporter.sendMail(mailOptions, function (err, info) {
+				   
+				});
+			}
 		}
 		
 	}
@@ -239,7 +245,13 @@ function incorrectAttempt(res, status, ip)
 	var remaining = (found) ? tryers[index][1] : (tryers[tryers.length] = [ip, 5])[1];
 	return {status:status, attempts:remaining};
 }
-
+function verificationExists(username)
+{
+	for(let i=0;i<verificationKeys.length;i++)
+		if(verificationKeys[i][1].getName() === username)
+			return true;
+	return false;
+}
 
 
 
