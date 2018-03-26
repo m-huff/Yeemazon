@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Yeemazon - Orders</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="css/master_style.css">
+    <style type="text/css">
+
+      h1 {font-size:102px;}
+      h2 {font-size:24px;}
+      #request {border-radius:2px;width:50px;}
+
+    </style>
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+  </head>
+  
+  <body>  
+    <h1 class="loginHeader">Yeemazon</h1>
+    <h2 class="loginHeader">Order History</h2>
+    <div style="margin-top: 30px"></div>
+
+    <div id="ordersToolbar">
+      <button id="catalog" class="toolbarButton">Catalog</button>
+      <button id="account" class="toolbarButton">Account</button>
+      <button id="cart" class="toolbarButton">Cart (%)</button>
+      <button id="logout" class="toolbarButton">Log Out</button>
+    </div>
+
+    <div id="ordersPageback">
+      <h2 class="itemLabel" style="padding-top:30px;">Orders (Sorted by Recent)</h2>
+      <div style="margin-top: 10px"></div>
+      <div class="orderHolder">
+      </div>
+    </div>
+
+	  <script src="js/session.js"></script>
+  </body>
+</html>  
+  
+  
