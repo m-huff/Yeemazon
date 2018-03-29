@@ -65,11 +65,16 @@ router.get("/getItemInfo", function(req, res){
 });
 
 router.get("/userInfo",function(req,res){
-	
-	res.json( (getUserfromIP(req)) ? {username:req.session_state.username, password : req.session_state.password} : 
-		{redirect:"/"});
+	if(!getUserfromIP(req))
+	{
+		req.session_state.reset();
+		res.json({redirect:"/"});
+		console.log("Userinfo requested");
+	}
+	else
+		res.json({username:req.session_state.username});
 
-	console.log("Userinfo requested");
+	
 });
 
 router.get("/login",function(req,res){
