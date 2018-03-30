@@ -6,15 +6,15 @@ Secret-Key: 6LfhUk4UAAAAAEf3g2FRVkhLt75ikTv66-iufaMW
 <div class="g-recaptcha" data-sitekey="6LfhUk4UAAAAACFLoT8YhRJxxtEJuamEWGQXNhfb"></div>
 
 todo by Friday 3/26/2018
-1. Fix weird undefined cookie bug //Wednesday
+1. Fix weird undefined cookie bug //Done
 
-2. Add admin permissions //Wednesday
+2. Add admin permissions //Still needed
 
-3. Add items and display them //Tuesday
+3. Add items and display them //Just need to display now
 
-4. Add an itemView html page //Tuesday
+4. Add an itemView html page //Still needed
 
-5. Admins have a create button to add a new item to the website //Tuesday
+5. Admins have a create button to add a new item to the website //Still needed
 
 Thursday
 
