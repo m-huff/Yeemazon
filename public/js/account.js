@@ -6,22 +6,18 @@ $(document).ready(function(){
 			window.location = window.location.href.split("/")[1] + data.redirect;
 		});
 	});
-	$("#request").click(() => {
-		$.get("/findItems", {category:$("#search").val()},(data) => {
-			alert(data.items);
-		});
-	});
+	
 });
 var username, password;
 function success(data)
 {
 	if(data.redirect === "/")
 	{
-		window.location = window.location.href.split("/")[1];
+		window.location = window.location.href.split("/")[1] + "/";
 		return;
 	}
-	username = data.username;
-	password = data.password;
-	$("#username").html("Username: " + username);
-	$("#password").html("Password: " + password);
+	$("#username").html("Username: " + data.user.username);
+	$("#email").html("Email: " + data.user.email);
+	$("#password").html("Password: " + data.user.password);
+	
 }

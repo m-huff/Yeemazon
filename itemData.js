@@ -1,21 +1,32 @@
 function ItemData()
 {
 	this.items = [];
-	var item = 
 	this.addItem = function(name, description, price, category, keywords){
 		this.items[this.items.length] = new (require('./item')) (name, description, price, this.items.length, category, keywords);
 	};
 	this.findItemByID = function(itemID){
 		for(let i=0;i<this.items.length;i++)
-			if(this.items[i].getItemID() === itemID)
+			if(this.items[i].itemID === +itemID)
 				return this.items[i];
+		return null;
+	};
+	this.searchName = function(name){
+		var name = name.toLowerCase();
+
+		for(let i =0;i<this.items.length;i++)
+		{
+			if(this.items[i].getName().toLowerCase() === name)
+				return this.items[i];
+		}
 		return null;
 	};
 	this.find = function(category, keywords){
 		var toRet = [];
+		var category = category.toLowerCase();
+
 		for(let i =0;i<this.items.length;i++)
 		{
-			if(this.items[i].getCategory() === category)
+			if(this.items[i].getCategory().toLowerCase() === category)
 			{
 				toRet[toRet.length] = this.items[i];
 			}

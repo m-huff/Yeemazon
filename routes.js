@@ -17,6 +17,12 @@ router.get("/session",handler);
 router.get("/account", function(req, res){
 	res.sendFile(__dirname + "\\public\\views\\account.html");
 });
+router.get("/item", function(req, res){
+	res.sendFile(__dirname + "\\public\\views\\item.html");
+});
+router.get("/itemInfo", function(req, res){
+	return res.json({item:items.findItemByID(req.query.id)});
+});
 
 function handler(req, res)
 {
@@ -36,7 +42,7 @@ router.get("/signup",function(req,res){
 	res.sendFile(__dirname + "/public/views/signup.html");
 });
 
-var UserData = new (require("./userData")) ("admin", "costa.vincent132@gmail.com", bcrypt.hashSync("password", saltRounds));
+var UserData = new (require("./userData")) ("admin", "costa.vincent132@gmail.com", bcrypt.hashSync("pass", saltRounds));
 UserData.allUsers[0].addIP("::ffff:192.168.1.135");
 
 var loggers = [];
@@ -45,12 +51,17 @@ var verificationKeys = [];
 var items = new (require('./itemData')) ();
 
 items.addItem("Yoda", "A Yoda figurine", 23.99, "Yoda", ["Yoda", "Figurine"]);
+items.addItem("Yoda2", "A cooler Yoda figurine", 49.99, "Yoda", ["Yoda", "Figurine", "Cooler"]);
 
 router.get("/findItems", function(req, res){
 	var keywords = req.query.keywords;
 	var category = req.query.category;
 
 	return res.json(({items:items.find(category, keywords)}));
+});
+router.get("/findItem", function(req, res){
+
+	return res.json(({itemID:(items.searchName(req.query.name)).itemID}));
 });
 router.get("/verify", function(req, res){
 	for(let i=0;i<verificationKeys.length;i++)
@@ -81,7 +92,7 @@ router.get("/userInfo",function(req,res){
 	else
 	{
 		var user = getUserfromIP(req);
-		res.json({username:user.getName(), password:user.getPassword()});
+		res.json({user:user});
 	}
 
 	

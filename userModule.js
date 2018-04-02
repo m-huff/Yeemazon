@@ -10,6 +10,14 @@ function User(username, email, password)
 	this.setName = function(newUsername){
 		return (this.username = newUsername);
 	};
+
+	this.getEmail = function(){
+		return this.email;
+	};
+	this.setEmail = function(newEmail){
+		return (this.email = newEmail);
+	};
+
 	this.getPassword = function(){
 		return this.password;
 	};
