@@ -25,14 +25,16 @@ function ItemData()
 		var category = category.toLowerCase();
 
 		for(let i =0;i<this.items.length;i++)
-		{
 			if(this.items[i].getCategory().toLowerCase() === category)
-			{
 				toRet[toRet.length] = this.items[i];
-			}
-		}
+		for(let i = 0;i<this.items.length;i++)
+			for(let i2=0;i2<keywords.lenth;i2++)
+				if(this.items[i] === keywords[i2])
+					toRet[toRet.length] = this.items[i];
+				
 		return toRet;
 	};
+
 	return this;
 }
 
