@@ -17,7 +17,6 @@ function success(data)
 		return;
 	}
 	$("#username").html("Username: " + data.user.username);
-	$("#email").html("Email: " + data.user.email);
-	$("#password").html("Password: " + data.user.password);
-	
+	$("#email").html("Email: " + data.user.email); 
+	$("#password").html("Password: " + data.user.password.substr(0,10) + (data.user.password.length > 10 ? "..." : ""));
 }
