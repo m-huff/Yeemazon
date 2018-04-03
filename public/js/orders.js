@@ -5,20 +5,17 @@ $(document).ready(function(){
 			window.location = window.location.href.split("/")[1] + data.redirect;
 		});
 	});
+
+	$("#return").click(() => {
+		window.location = window.location.href.split("/")[1] + "/session";
+	});
+
 	$("#account").click(() => {
 		window.location = window.location.href.split("/")[1] + "/account";
 	});
-	$("#orders").click(() => {
-		window.location = window.location.href.split("/")[1] + "/orders";
-	});
+
 	$("#cart").click(() => {
 		window.location = window.location.href.split("/")[1] + "/cart";
-	});
-	$("#request").click(() => {
-		$.get("/findItem", {name:$("#search").val()}, (data) => {
-			if(data!==null)
-				window.location = window.location.href.split("/")[1] + "/item?id=" + data.itemID;
-		});
 	});
 });
 var username, password;
@@ -29,6 +26,5 @@ function success(data)
 		window.location = window.location.href.split("/")[1] + "/";
 		return;
 	}
-	$("#userGreeting").html("Hello " + data.user.username + "!");
-	$("#password").html(data.user.password);
+	//$("#cart").html("Cart (" + number of items in cart + ")");
 }
