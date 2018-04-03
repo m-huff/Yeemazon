@@ -71,7 +71,7 @@ router.get("/verify", function(req, res){
 			UserData.findReturnUser(user.getName()).addIP(verificationKeys[i][2]);
 			console.log("Correct code");
 			loggers[loggers.length] = [user, verificationKeys[i][2]];
-			return res.sendFile(__dirname + "\\public\\views\\login.html");
+			return res.sendFile(__dirname + "\\public\\views\\session.html");
 		}
 	return res.json({error:"Code is invalid or has expired!"});
 });
