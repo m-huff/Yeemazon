@@ -20,6 +20,12 @@ router.get("/account", function(req, res){
 router.get("/item", function(req, res){
 	res.sendFile(__dirname + "\\public\\views\\item.html");
 });
+router.get("/cart", function(req, res){
+	res.sendFile(__dirname + "\\public\\views\\cart.html");
+});
+router.get("/orders", function(req, res){
+	res.sendFile(__dirname + "\\public\\views\\orders.html");
+});
 router.get("/itemInfo", function(req, res){
 	return res.json({item:items.findItemByID(req.query.id)});
 });
