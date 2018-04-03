@@ -35,8 +35,11 @@ var transporter = nodemailer.createTransport({
         pass: 'Whynotyo'
     },
  tls: {
-    rejectUnauthorized: false
-}
+    	rejectUnauthorized: false
+	},
+	port: 465,
+	secure:true
+
 });
 router.get("/signup",function(req,res){
 	res.sendFile(__dirname + "/public/views/signup.html");
