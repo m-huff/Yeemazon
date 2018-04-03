@@ -56,6 +56,10 @@ h2 {font-family:"tahoma";color:#DDD;transition: .3s}
 .bigButton:hover{background:#FFF;box-shadow:0px 0px 10px 5px #97B1BF;color:#000;}
 .bigButton:after {content: "";background: #F1C40F;display: block;position: absolute;margin-left: -20px;opacity: 0;}
 
+/*SEARCH*/
+
+.searchHolder {width:100%;background-color:#000;opacity:0.5;margin:0 auto;flex-wrap:wrap;text-align:center;position: relative;animation: flyInFromBottom 2s 1 ease;}
+
 /* ANIMATIONS */
 
 @keyframes flyInFromTop {
