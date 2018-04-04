@@ -1,14 +1,13 @@
 $(document).ready(function(){
 	$.get("/userInfo", success);
 	$.get("/findItems", {keywords:retID(window.location.href)}, function(data){
-		for(var item in data.items)
-					// var divCreator = "<div class='itemBox'>
-					// 					<img id='itemBoxPic' src=''></img>
-					// 					<label id='itemBoxName'>" + item.name + "</label>
-					// 					<label id='itemBoxPrice'>" + item.price + "</label>
-					// 	  			  </div>";
-					//var divCreator = "<div class=\"itemBox\">HELLO</div>";
-			$(".searchHolder").add("div").css("class", "itemBox");
+		for(var item in data.items) {
+
+		//DUMMY ITEM BOX
+		var divCreator = "<div onclick=\"goToItemPage\" class=\"itemBox\"><img src=\"views/kingkong.gif\" style=\"width:150;height:150px;margin-top:5px\"></img><br><label>YODA</label><br><label>$19.99</label></div>";
+		$(".searchHolder").append(divCreator);
+
+		}
 	});
 	$("#logout").click(() => {
 		$.post("/logout", (data) => {
