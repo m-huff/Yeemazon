@@ -29,6 +29,9 @@ router.get("/orders", function(req, res){
 router.get("/itemInfo", function(req, res){
 	return res.json({item:items.findItemByID(req.query.id)});
 });
+router.get("/search", function(req, res){
+	res.sendFile(__dirname + "\\public\\views\\search.html");
+});
 
 function handler(req, res)
 {
@@ -65,13 +68,12 @@ items.addItem("Yoda2", "A cooler Yoda figurine", 49.99, "Yoda", ["Yoda", "Figuri
 
 router.get("/findItems", function(req, res){
 	var keywords = req.query.keywords;
-	var category = req.query.category;
 
-	return res.json(({items:items.find(category, keywords)}));
+	return res.json({items:items.find(keywords.split(" "))});
 });
 router.get("/findItem", function(req, res){
 
-	return res.json(({itemID:(items.searchName(req.query.name)).itemID}));
+	return res.json({itemID:(items.searchName(req.query.name)).itemID});
 });
 router.get("/verify", function(req, res){
 	for(let i=0;i<verificationKeys.length;i++)

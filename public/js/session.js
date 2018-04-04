@@ -15,7 +15,7 @@ $(document).ready(function(){
 		window.location = window.location.href.split("/")[1] + "/cart";
 	});
 	$("#request").click(() => {
-		window.location = window.location.href.split("/")[1] + "/search?query=" + $("#request").val();
+		window.location = window.location.href.split("/")[1] + "/search?query=" + $("#search").val();
 	});
 });
 var username, password;

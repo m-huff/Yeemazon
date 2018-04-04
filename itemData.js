@@ -20,15 +20,11 @@ function ItemData()
 		}
 		return null;
 	};
-	this.find = function(category, keywords){
+	this.find = function(keywords){
 		var toRet = [];
-		var category = category.toLowerCase();
 
-		for(let i =0;i<this.items.length;i++)
-			if(this.items[i].getCategory().toLowerCase() === category)
-				toRet[toRet.length] = this.items[i];
 		for(let i = 0;i<this.items.length;i++)
-			for(let i2=0;i2<keywords.lenth;i2++)
+			for(let i2=0;i2<keywords.length;i2++)
 				if(this.items[i] === keywords[i2])
 					toRet[toRet.length] = this.items[i];
 				
