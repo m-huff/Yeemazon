@@ -43,13 +43,21 @@ $(document).ready(function(){
 		window.location = window.location.href.split("/")[1] + "/cart";
 	});
 	$("#request").click(() => {
-		window.location = window.location.href.split("/")[1] + "/search?query=" + $("#search").val();
+		if ($("#search").val() && $("#search").val() !== "Search for an item")
+			window.location = window.location.href.split("/")[1] + "/search?query=" + $("#search").val();
 	});
 
 	$(document).keypress(function(e){
-      if(e.keyCode==13 && $(#search).val()!=="Search for an item" && $(#search).val()!=="")
+      if(e.keyCode==13 && $("#search").val() && $("#search").val() !== "Search for an item")
       $('#request').click();
+
+  	  if (!($("#search").val()) || $("#search").val() == "Search for an item")
+    	$('#request').prop('disabled', true);
+      else
+    	$('#request').prop('disabled', false);
     });
+
+	$('#request').prop('disabled', true);
 
     $("#search").focus( function() {
         if ( $(this).val()=="Search for an item") {
