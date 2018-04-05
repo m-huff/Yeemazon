@@ -18,6 +18,11 @@ function redirect(data)
 $(document).ready(function(){ 
 	$("#request").click(sendLogin);
 	//$("#former").on('submit', submitForm);
+
+	$(document).keypress(function(e){
+      if(e.keyCode==13)
+      $('#request').click();
+    });
 });
 function submitForm(e)
 {

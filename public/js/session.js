@@ -17,6 +17,23 @@ $(document).ready(function(){
 	$("#request").click(() => {
 		window.location = window.location.href.split("/")[1] + "/search?query=" + $("#search").val();
 	});
+
+	$(document).keypress(function(e){
+      if(e.keyCode==13)
+      $('#request').click();
+    });
+
+    $("#search").focus( function() {
+        if ( $(this).val()=="Search for an item") {
+            $(this).val('');
+        } 
+    });
+
+    $("#search").blur( function() {
+        if ( $(this).val()=="") {
+            $(this).val('Search for an item');
+        } 
+    });
 });
 var username, password;
 function success(data)
