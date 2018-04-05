@@ -47,7 +47,7 @@ $(document).ready(function(){
 	});
 
 	$(document).keypress(function(e){
-      if(e.keyCode==13)
+      if(e.keyCode==13 && $(#search).val()!=="Search for an item" && $(#search).val()!=="")
       $('#request').click();
     });
 
