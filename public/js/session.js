@@ -16,7 +16,7 @@ $(document).ready(function(){
 	});
 	$("#request").click(() => {
 		if ($("#search").val() && $("#search").val() !== "Search for an item")
-			window.location = window.location.href.split("/")[1] + "/search?query=" + $("#search").val();
+			window.location = window.location.href.split("/")[1] + "/search?query=" + $("#search").val().toLowerCase();
 	});
 
 	$(document).keypress(function(e){

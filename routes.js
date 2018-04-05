@@ -97,7 +97,7 @@ router.get("/findItems", function(req, res){
 		else{
 			console.log(req.query.keywords);
 			console.log(products);
-			return res.json(products);
+			return res.json({items:products});
 		}
 	});
 });
@@ -109,7 +109,7 @@ router.get("/findItem", function(req, res){
 		else{
 			console.log(req.query.name);
 			console.log(products);
-			return res.json(products);
+			return res.json({item:products});
 		}
 	});
 });

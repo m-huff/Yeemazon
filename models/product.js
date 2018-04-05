@@ -13,7 +13,7 @@ let productSchema = mongoose.Schema({
 		type: String,
 		require: true
 	},
-	category: {
+	link: {
 		type: String,
 		require: true
 	},
