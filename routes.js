@@ -46,7 +46,6 @@ router.get("/itemInfo", function(req, res){
 		if (err) {
 			console.log(err);
 		}else{
-			console.log(products);
 			return res.json(products);
 		}
 	});
@@ -83,10 +82,6 @@ UserData.allUsers[0].addIP("::ffff:10.73.122.151");
 var loggers = [];
 var verificationKeys = [];
 
-var items = new (require('./itemData')) ();
-
-items.addItem("Yoda", "A Yoda figurine", 23.99, "Yoda", ["Yoda", "Figurine"]);
-items.addItem("Yoda2", "A cooler Yoda figurine", 49.99, "Yoda", ["Yoda", "Figurine", "Cooler"]);
 
 router.get("/findItems", function(req, res){
 	//var keywords = req.query.keywords;
@@ -95,8 +90,6 @@ router.get("/findItems", function(req, res){
 	Product.find({keywords:req.query.keywords},function(err,products){
 		if (err) {console.log(err);}
 		else{
-			console.log(req.query.keywords);
-			console.log(products);
 			return res.json({items:products});
 		}
 	});
@@ -107,8 +100,6 @@ router.get("/findItem", function(req, res){
 	Product.findOne({name:req.query.name},function(err,products){
 		if (err) {console.log(err);}
 		else{
-			console.log(req.query.name);
-			console.log(products);
 			return res.json({item:products});
 		}
 	});
