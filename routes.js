@@ -12,11 +12,11 @@ const saltRounds = 10;
 
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/yeemazon');
+mongoose.connect('mongodb://admin:admin123@ds135399.mlab.com:35399/yemazon');
 let db = mongoose.connection;
 
 db.once('open',function(){
-	console.log("Connected to db.")
+	console.log("Connected to remote db.")
 });
 db.on('error',function(err){
 	console.log(err);
