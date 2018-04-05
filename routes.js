@@ -10,6 +10,20 @@ var nodemailer = require('nodemailer');
 var bcrypt = require('bcrypt');
 const saltRounds = 10;
 
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost/yeemazon');
+let db = mongoose.connection;
+
+db.once('open',function(){
+	console.log("Connected to db.")
+});
+db.on('error',function(err){
+	console.log(err);
+});
+
+let Product = require('./models/product')
+
 router.get("/",handler);
 router.get("/login",handler);
 router.get("/session",handler);
@@ -27,7 +41,15 @@ router.get("/orders", function(req, res){
 	res.sendFile(__dirname + "\\public\\views\\orders.html");
 });
 router.get("/itemInfo", function(req, res){
-	return res.json({item:items.findItemByID(req.query.id)});
+	//return res.json({item:items.findItemByID(req.query.id)});
+	Product.find({_id:req.query.id},function(err,products){
+		if (err) {
+			console.log(err);
+		}else{
+			console.log(products);
+			return res.json(products);
+		}
+	});
 });
 router.get("/search", function(req, res){
 	res.sendFile(__dirname + "\\public\\views\\search.html");
@@ -67,13 +89,29 @@ items.addItem("Yoda", "A Yoda figurine", 23.99, "Yoda", ["Yoda", "Figurine"]);
 items.addItem("Yoda2", "A cooler Yoda figurine", 49.99, "Yoda", ["Yoda", "Figurine", "Cooler"]);
 
 router.get("/findItems", function(req, res){
-	var keywords = req.query.keywords;
+	//var keywords = req.query.keywords;
+	//return res.json({items:items.find(keywords.split(" "))});
 
-	return res.json({items:items.find(keywords.split(" "))});
+	Product.find({keywords:req.query.keywords},function(err,products){
+		if (err) {console.log(err);}
+		else{
+			console.log(req.query.keywords);
+			console.log(products);
+			return res.json(products);
+		}
+	});
 });
 router.get("/findItem", function(req, res){
+	//return res.json({itemID:(items.searchName(req.query.name)).itemID});
 
-	return res.json({itemID:(items.searchName(req.query.name)).itemID});
+	Product.findOne({name:req.query.name},function(err,products){
+		if (err) {console.log(err);}
+		else{
+			console.log(req.query.name);
+			console.log(products);
+			return res.json(products);
+		}
+	});
 });
 router.get("/verify", function(req, res){
 	for(let i=0;i<verificationKeys.length;i++)
@@ -89,9 +127,18 @@ router.get("/verify", function(req, res){
 });
 
 router.get("/getItemInfo", function(req, res){
-	var itemID = req.query.itemID;
+//	var itemID = req.query.itemID;
+//	res.json({items:items.findById(itemID)});
 
-	res.json({items:items.findById(itemID)});
+	Product.find({_id:req.query.itemID},function(err,products){
+		if(err){
+			console.log(err);
+		}else{
+			console.log(req.query.itemID);
+			console.log(products);
+			res.json(products);
+		}
+	});
 });
 
 router.get("/userInfo",function(req,res){
