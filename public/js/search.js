@@ -14,6 +14,9 @@ $(document).ready(function(){
 		$(".searchHolder").css("height", 360 * ((data.items.length/4) + 1));
 		$("#searchBack").css("height", 490 * ((data.items.length/4) + 1));
 
+		//update search list size to show user
+		$(".itemLabel").html("Search Results for " + "\"" + retID(window.location.href) + "\" -- " + data.items.length + " results");
+
 		//DUMMY ITEMS FOR TESTING PURPOSES
 		// var divCreator = "<div onclick=\"goToItemPage\" class=\"itemBox\"><img src=\"views/kingkong.gif\" style=\"width:260;height:260px;margin-top:5px\"></img><br><label>YODA</label><br><label>$19.99</label></div>";
 		// $(".searchHolder").append(divCreator);
@@ -81,7 +84,7 @@ function success(data)
 	}
 	$("#userGreeting").html("Hello " + data.user.username + "!");
 	$("#password").html(data.user.password);
-	$(".itemLabel").html("Search Results for " + "\"" + retID(window.location.href) + "\"");
+	
 }
 function retID(WINDOWURL)
 {

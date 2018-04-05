@@ -3,6 +3,7 @@ label {font-family:"tahoma";color:#DDD;font-weight:bold;text-shadow: 3px 3px 6px
 label:hover {color:#FFF;font-weight:bold;text-shadow: 3px 3px 6px #DDD}
 h1 {font-family:"tahoma";color:#DDD;transition: .3s}
 h2 {font-family:"tahoma";color:#DDD;transition: .3s}
+h3 {font-family:"tahoma";color:#DDD;transition: .3s}
 
 /*SPECIFIC LOGIN ELEMENTS STYLE*/
 
