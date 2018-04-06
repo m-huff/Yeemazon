@@ -142,7 +142,7 @@ router.get("/getItemInfo", function(req, res){
 
 router.get("/userInfo",function(req,res){
 	console.log("Userinfo requested");
-	if(!getUserfromIP(req))
+	if(!req.session_state||req.session_state.active === false || !getUserfromIP(req))
 	{
 		req.session_state.reset();
 		return res.json({redirect:"/"});

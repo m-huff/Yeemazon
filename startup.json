@@ -16,6 +16,8 @@
 	"password" : "Whynotyo", 
 	
 	"recaptchaKey" : "6LfhUk4UAAAAAEf3g2FRVkhLt75ikTv66-iufaMW", 
+	"sessionSecret" : "dfkartuiqrq4h52o734erhsdfklghroetiuy3nty2trkgngbrt2",
+	"cookieExpirationinMS" : 86400000,
 	
 	"loginAttempts" : 5
 }

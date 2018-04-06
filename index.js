@@ -2,6 +2,8 @@ var myIP = require("ip");
 var express = require('express');
 var bodyParser = require('body-parser');
 
+var startup = require('./startup');
+
 var routes = require("./routes");
 var clientSessions = require('client-sessions');
 
@@ -11,8 +13,8 @@ app.use(bodyParser.json());
 
 
 app.use(clientSessions({
-  secret: 'here is a text string',
-  duration: 1 * 60 * 1000
+  secret: startup.sessionSecret, // can be anything
+  maxAge: startup.cookieExpirationinMS
 }));
 
 
@@ -23,7 +25,6 @@ app.use('/js', express.static('./public/js'));
 app.use('/images', express.static('./public/images'));
 app.use(routes);
 
-var port = require('./startup').port;
 
 app.listen(port);
-console.log("\n   Yeemazon server has initialized! \n      IP: " + myIP.address() + " Port: " + port + "\n");
+console.log("\n   Yeemazon server has initialized! \n      IP: " + myIP.address() + " Port: " + startup.port + "\n");
