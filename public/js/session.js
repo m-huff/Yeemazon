@@ -23,10 +23,10 @@ $(document).ready(function(){
 	$.get("/findItems", {keywords:"popular"}, function(data){
 		for(var i = 0; i < 6; i++) {
 
-			var divCreator = "<div id=\"" + data.items[i]._id + "\" class=\"itemBox\"><img src=\"" + data.items[i].link + "\" style=\"width:140px;height:140px;margin-top:5px\"></img><br><label>" + data.items[i].name + "</label><br><label>$" + data.items[i].price + "</label></div>";
+			let id = data.items[i]._id;
+			var divCreator = "<div id=\"" + id + "\" class=\"itemBox\"><img src=\"" + data.items[i].link + "\" style=\"width:140px;height:140px;margin-top:5px\"></img><br><label>" + data.items[i].name + "</label><br><label>$" + data.items[i].price + "</label></div>";
 			$("#items1").append(divCreator);
-			var id = data.items[i]._id;
-			$("#" + data.items[i]._id).click(function(){window.location = window.location.href.split("/")[1] + "/item?id=" + id});
+			$("#" + id).click(function(){window.location = window.location.href.split("/")[1] + "/item?id=" + id});
 
 		}
 	});
@@ -35,10 +35,10 @@ $(document).ready(function(){
 	$.get("/findItems", {keywords:"under20"}, function(data){
 		for(var i = 0; i < 6; i++) {
 
-			var divCreator = "<div id=\"" + data.items[i]._id + "\" class=\"itemBox\"><img src=\"" + data.items[i].link + "\" style=\"width:140px;height:140px;margin-top:5px\"></img><br><label>" + data.items[i].name + "</label><br><label>$" + data.items[i].price + "</label></div>";
+			let id = data.items[i]._id;
+			var divCreator = "<div id=\"" + id+ "\" class=\"itemBox\"><img src=\"" + data.items[i].link + "\" style=\"width:140px;height:140px;margin-top:5px\"></img><br><label>" + data.items[i].name + "</label><br><label>$" + data.items[i].price + "</label></div>";
 			$("#items2").append(divCreator);
-			var id = data.items[i]._id;
-			$("#" + data.items[i]._id).click(function(){window.location = window.location.href.split("/")[1] + "/item?id=" + id});
+			$("#" + id).click(function(){window.location = window.location.href.split("/")[1] + "/item?id=" + id});
 
 		}
 	});
@@ -47,10 +47,10 @@ $(document).ready(function(){
 	$.get("/findItems", {keywords:"yee"}, function(data){
 		for(var i = 0; i < 6; i++) {
 
-			var divCreator = "<div id=\"" + data.items[i]._id + "\" class=\"itemBox\"><img src=\"" + data.items[i].link + "\" style=\"width:140px;height:140px;margin-top:5px\"></img><br><label>" + data.items[i].name + "</label><br><label>$" + data.items[i].price + "</label></div>";
+			let id = data.items[i]._id;
+			var divCreator = "<div id=\"" + id + "\" class=\"itemBox\"><img src=\"" + data.items[i].link + "\" style=\"width:140px;height:140px;margin-top:5px\"></img><br><label>" + data.items[i].name + "</label><br><label>$" + data.items[i].price + "</label></div>";
 			$("#items3").append(divCreator);
-			var id = data.items[i]._id;
-			$("#" + data.items[i]._id).click(function(){window.location = window.location.href.split("/")[1] + "/item?id=" + id});
+			$("#" + id).click(function(){window.location = window.location.href.split("/")[1] + "/item?id=" + id});
 
 		}
 	});
