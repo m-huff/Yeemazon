@@ -1,0 +1,8 @@
+{
+	"port" : "6969", 
+	"link" : "mongodb://admin:admin123@ds135399.mlab.com:35399/yemazon",
+	"gmail" : "yeemazon@gmail.com", 
+	"password" : "Whynotyo", 
+	"recaptchaKey" : "6LfhUk4UAAAAAEf3g2FRVkhLt75ikTv66-iufaMW"
+	
+}

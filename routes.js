@@ -12,7 +12,9 @@ const saltRounds = 10;
 
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://admin:admin123@ds135399.mlab.com:35399/yemazon');
+var startup = require('./startup');
+
+mongoose.connect(startup.link);
 let db = mongoose.connection;
 
 db.once('open',function(){
@@ -64,8 +66,8 @@ function handler(req, res)
 var transporter = nodemailer.createTransport({
  service: 'gmail',
  auth: {
-        user: 'yeemazon@gmail.com',
-        pass: 'Whynotyo'
+        user: startup.gmail,
+        pass: startup.password
     },
  tls: {
     	rejectUnauthorized: false
@@ -182,8 +184,7 @@ router.post("/signup", function(req, res){
 	if(!req.body.captcha)
 		return res.json({success:false, status:"Please select captcha"});
 
-	const key = '6LfhUk4UAAAAAEf3g2FRVkhLt75ikTv66-iufaMW';
-	const verify = `https://google.com/recaptcha/api/siteverify?secret=${key}&response=${req.body.captcha}&remoteip=${ip}`;
+	const verify = `https://google.com/recaptcha/api/siteverify?secret=${startup.recaptchaKey}&response=${req.body.captcha}&remoteip=${ip}`;
 
 	request(verify, (err, response, body) => {
 		body = JSON.parse(body);

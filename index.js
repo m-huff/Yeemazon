@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 
 app.use(clientSessions({
-  secret: 'here is a text string', // CHANGE THIS!
+  secret: 'here is a text string',
   duration: 1 * 60 * 1000
 }));
 
@@ -20,7 +20,10 @@ app.use('/', express.static('./'));
 app.use('/views', express.static('./public/views'));
 app.use('/css', express.static('./public/css'));
 app.use('/js', express.static('./public/js'));
+app.use('/images', express.static('./public/images'));
 app.use(routes);
 
-app.listen(3000);
+var port = require('./startup').port;
 
+app.listen(port);
+console.log("Started Listening on Port: " + port);
