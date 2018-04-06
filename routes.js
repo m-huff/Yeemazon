@@ -40,6 +40,9 @@ router.get("/cart", function(req, res){
 router.get("/orders", function(req, res){
 	res.sendFile(__dirname + "\\public\\views\\orders.html");
 });
+router.get("/admin", function(req, res){
+	res.sendFile(__dirname + "\\public\\views\\admin.html");
+});
 router.get("/itemInfo", function(req, res){
 	//return res.json({item:items.findItemByID(req.query.id)});
 	Product.find({_id:req.query.id},function(err,products){
@@ -104,6 +107,20 @@ router.get("/findItem", function(req, res){
 		}
 	});
 });
+
+router.post("/addItem", function(req, res){
+	//add an item to mongodb
+	//return error:true or error:false in a json object
+});
+router.post("/changeItem", function(req, res){
+	//change an item in mongodb
+	//return error:true or error:false in a json object
+});
+router.post("/deleteItem", function(req, res){
+	//remove an item from mongodb
+	//return error:true or error:false in a json object
+});
+
 router.get("/verify", function(req, res){
 	for(let i=0;i<verificationKeys.length;i++)
 		if(req.query.code === verificationKeys[i][0])

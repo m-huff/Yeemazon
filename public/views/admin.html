@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Yeemazon - Admin Actions</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="css/master_style.css">
+    <style type="text/css">
+
+      h1 {font-size:102px;}
+      h2 {font-size:24px;}
+      #signup {width: 100px;height:25px}
+      .request {width: 200px;height:30px;margin-bottom:20px;}
+
+    </style>
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+  </head>
+  
+  <body>  
+    <div style="margin-top: 5%"></div>
+    <h1 id="header" class="loginHeader">Yeemazon</h1>
+    <h2 class="loginHeader">Admin Actions</h2>
+    <div style="margin-top: 30px"></div>
+
+    <div id="adminBox">
+      <br>
+      <input type="text" id="name" value="Item Name" class="loginInput"></input>
+      <input type="text" id="id" value="Item ID" class="loginInput"></input>
+      <input type="text" id="desc" value="Item Description" class="loginInput"></input>
+      <input type="text" id="link" value="Item Picture Link" class="loginInput"></input>
+      <input type="text" id="price" value="Item Price" class="loginInput"></input>
+      <div style="margin-top: 40px"></div>
+      <button id="add" class="request">Add Item</button>
+      <button id="change" class="request">Change Item by ID</button>
+      <button id="remove" class="request">Delete Item with ID</button>
+      <div style="margin-top: 20px"></div>
+      <button id="return" class="request">Return to Catalog</button>
+    </div>
+
+  	<script src="js/admin.js"></script>
+  </body>
+</html>  
+  
+  

@@ -5,12 +5,14 @@ Secret-Key: 6LfhUk4UAAAAAEf3g2FRVkhLt75ikTv66-iufaMW
 
 <div class="g-recaptcha" data-sitekey="6LfhUk4UAAAAACFLoT8YhRJxxtEJuamEWGQXNhfb"></div>
 
+Image path format: "images/IMAGE.PNG"
+
 Still need to be finished as of 4/5/18:
 
-1. Admin permissions (adding, deleting, updating)
+1. Finish admin permissions in routes.js (only need the post requests to mongoDB)
 
-2. Displaying items' pictures, storing uploaded pictures, making use of item.link
+2. Allowing upload of pictures in admin actions
 
-3. Adding keywords "popular", "under20", and "yee" to populate browse page
+3. Adding keywords "popular", "under20", and "yee" to populate browse page (in mongoDB)
 
-4. Adding more items (25 to 30)
+4. Adding more items with images (25 to 30, in mongoDB)
