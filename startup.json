@@ -1,5 +1,5 @@
 {
-	"port" : "6969", 
+	"port" : "3000", 
 	"link" : "mongodb://admin:admin123@ds135399.mlab.com:35399/yemazon",
 	"gmail" : "yeemazon@gmail.com", 
 	"password" : "Whynotyo", 
