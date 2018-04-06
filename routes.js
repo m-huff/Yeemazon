@@ -1,6 +1,7 @@
 
 var express = require("express");
 var router = express.Router();
+var startup = require('./startup');
 
 const request = require('request');
 var clientSessions = require('client-sessions');
@@ -8,11 +9,9 @@ const uuidv4 = require('uuid/v4');
 var nodemailer = require('nodemailer');
 
 var bcrypt = require('bcrypt');
-const saltRounds = 10;
+const saltRounds = startup.saltRounds;
 
 const mongoose = require('mongoose');
-
-var startup = require('./startup');
 
 mongoose.connect(startup.link);
 let db = mongoose.connection;
@@ -24,7 +23,7 @@ db.on('error',function(err){
 	console.log(err);
 });
 
-let Product = require('./models/product')
+let Product = require('./models/product');
 
 router.get("/",handler);
 router.get("/login",handler);
@@ -46,13 +45,12 @@ router.get("/admin", function(req, res){
 	res.sendFile(__dirname + "\\public\\views\\admin.html");
 });
 router.get("/itemInfo", function(req, res){
-	//return res.json({item:items.findItemByID(req.query.id)});
 	Product.find({_id:req.query.id},function(err,products){
 		if (err) {
 			console.log(err);
-		}else{
-			return res.json(products);
+			return err;
 		}
+		return res.json(products);
 	});
 });
 router.get("/search", function(req, res){
@@ -64,7 +62,7 @@ function handler(req, res)
 	res.sendFile(__dirname + ("\\public\\views\\" + ((req.session_state.active) ? "session.html" : "login.html")));
 }
 var transporter = nodemailer.createTransport({
- service: 'gmail',
+ service: startup.emailType,
  auth: {
         user: startup.gmail,
         pass: startup.password
@@ -80,33 +78,28 @@ router.get("/signup",function(req,res){
 	res.sendFile(__dirname + "/public/views/signup.html");
 });
 
-var UserData = new (require("./userData")) ("admin", "costa.vincent132@gmail.com", bcrypt.hashSync("pass", saltRounds));
-UserData.allUsers[0].addIP("::ffff:192.168.1.135");
-UserData.allUsers[0].addIP("::ffff:10.73.122.151");
+var UserData = new (require("./userData")) (startup.adminName, startup.adminEmail, bcrypt.hashSync(startup.adminPass, saltRounds));
+for(let i in startup.adminIPs)
+	UserData.allUsers[0].addIP(startup.adminIPs[i]);
 
 var loggers = [];
 var verificationKeys = [];
 
 
 router.get("/findItems", function(req, res){
-	//var keywords = req.query.keywords;
-	//return res.json({items:items.find(keywords.split(" "))});
 
 	Product.find({keywords:req.query.keywords},function(err,products){
-		if (err) {console.log(err);}
-		else{
-			return res.json({items:products});
-		}
+		if (err) {console.log(err);return err;}
+
+		return res.json({items:products});
+		
 	});
 });
 router.get("/findItem", function(req, res){
-	//return res.json({itemID:(items.searchName(req.query.name)).itemID});
 
 	Product.findOne({name:req.query.name},function(err,products){
-		if (err) {console.log(err);}
-		else{
-			return res.json({item:products});
-		}
+		if (err) {console.log(err);return err;}
+		return res.json({item:products});
 	});
 });
 
@@ -137,32 +130,24 @@ router.get("/verify", function(req, res){
 });
 
 router.get("/getItemInfo", function(req, res){
-//	var itemID = req.query.itemID;
-//	res.json({items:items.findById(itemID)});
 
 	Product.find({_id:req.query.itemID},function(err,products){
 		if(err){
 			console.log(err);
-		}else{
-			console.log(req.query.itemID);
-			console.log(products);
-			res.json(products);
+			return;
 		}
+		return res.json({item:products});
 	});
 });
 
 router.get("/userInfo",function(req,res){
-	if(!getUserfromIP(req))
+	console.log("Userinfo requested");
+	if(!req.session_state||req.session_state.active === false || !getUserfromIP(req))
 	{
 		req.session_state.reset();
-		res.json({redirect:"/"});
-		console.log("Userinfo requested");
+		return res.json({redirect:"/"});
 	}
-	else
-	{
-		var user = getUserfromIP(req);
-		res.json({user:user});
-	}
+	return res.json({user:getUserfromIP(req)});
 
 	
 });
@@ -282,7 +267,7 @@ function loginAttempt(req, res)
 
 				var link = "http://" + req.body.ref + "/verify?code=" + key;
 				const mailOptions = {
-				  from: 'yeemazon@gmail.com', // sender address
+				  from: startup.email, // sender address
 				  to: user.email, // list of receivers
 				  subject: 'IP Verification link', // Subject line
 				  html: '<a href="' + link + '">Click here  to verify</a>'// plain text body
@@ -336,7 +321,7 @@ function incorrectAttempt(res, status, ip)
 			index = i;
 			break;
 		}
-	var remaining = (found) ? tryers[index][1] : (tryers[tryers.length] = [ip, 5])[1];
+	var remaining = (found) ? tryers[index][1] : (tryers[tryers.length] = [ip, startup.loginAttempts])[1];
 	return {status:status, attempts:remaining};
 }
 function verificationExists(username)
