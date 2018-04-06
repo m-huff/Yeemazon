@@ -19,6 +19,45 @@ $(document).ready(function(){
 			window.location = window.location.href.split("/")[1] + "/search?query=" + $("#search").val().toLowerCase();
 	});
 
+	//grab first 6 "popular items"
+	$.get("/findItems", {keywords:"popular"}, function(data){
+		for(var i = 0; i < 6; i++) {
+
+			//TODO - have it display the actual item's picture (item.link)
+			var divCreator = "<div id=\"" + data.items[i]._id + "\" class=\"itemBox\"><img src=\"views/kingkong.gif\" style=\"width:140px;height:140px;margin-top:5px\"></img><br><label>" + data.items[i].name + "</label><br><label>" + data.items[i].price + "</label></div>";
+			$("#items1").append(divCreator);
+			var id = data.items[i]._id;
+			$("#" + data.items[i]._id).click(function(){window.location = window.location.href.split("/")[1] + "/item?id=" + id});
+
+		}
+	});
+
+	//grab first 6 "under $20" items
+	$.get("/findItems", {keywords:"under20"}, function(data){
+		for(var i = 0; i < 6; i++) {
+
+			//TODO - have it display the actual item's picture (item.link)
+			var divCreator = "<div id=\"" + data.items[i]._id + "\" class=\"itemBox\"><img src=\"views/kingkong.gif\" style=\"width:140px;height:140px;margin-top:5px\"></img><br><label>" + data.items[i].name + "</label><br><label>" + data.items[i].price + "</label></div>";
+			$("#items2").append(divCreator);
+			var id = data.items[i]._id;
+			$("#" + data.items[i]._id).click(function(){window.location = window.location.href.split("/")[1] + "/item?id=" + id});
+
+		}
+	});
+
+	//grab first 6 "yee's picks" items
+	$.get("/findItems", {keywords:"yee"}, function(data){
+		for(var i = 0; i < 6; i++) {
+
+			//TODO - have it display the actual item's picture (item.link)
+			var divCreator = "<div id=\"" + data.items[i]._id + "\" class=\"itemBox\"><img src=\"views/kingkong.gif\" style=\"width:140px;height:140px;margin-top:5px\"></img><br><label>" + data.items[i].name + "</label><br><label>" + data.items[i].price + "</label></div>";
+			$("#items3").append(divCreator);
+			var id = data.items[i]._id;
+			$("#" + data.items[i]._id).click(function(){window.location = window.location.href.split("/")[1] + "/item?id=" + id});
+
+		}
+	});
+
 	$(document).keypress(function(e){
       if(e.keyCode==13 && $("#search").val() && $("#search").val() !== "Search for an item")
       $('#request').click();

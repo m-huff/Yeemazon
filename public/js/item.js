@@ -3,9 +3,11 @@ $(document).ready(function(){
 
 	var id = retID(window.location.href);
 	$.get("/itemInfo", {id:id},(data) => {
-		$("#name").html(data.item.name);
-		$("#itemPrice").html(data.item.price);
-		$("#itemDesc").html(data.item.description);
+		$("#name").html(data[0].name);
+		$(document).prop('title', 'Yeemazon - ' + data[0].name);
+		$("#itemPrice").html("$" + data[0].price);
+		$("#itemDesc").html(data[0].description);
+		$("#itemDesc").html(data[0].description);
 	});
 
 	$("#logout").click(() => {
@@ -32,6 +34,5 @@ function retID(WINDOWURL)
 	var rightSide = WINDOWURL.split("?")[1];
 	var findIt = rightSide.split("id")[1];
 	var maybe = findIt.split("=")[1];
-	var final = maybe.split("&")[0];
-	return (final) ? final : maybe;
+	return maybe;
 }

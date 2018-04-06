@@ -1,32 +1,23 @@
 $(document).ready(function(){
 	$.get("/userInfo", success);
 	$.get("/findItems", {keywords:retID(window.location.href)}, function(data){
-		for(var item in data.items) {
+		for(var i = 0; i < data.items.length; i++) {
 
-		//DUMMY ITEM BOX
-		//TODO - have it display the actual item and its attributes
-		var divCreator = "<div onclick=\"goToItemPage\" class=\"itemBox\"><img src=\"views/kingkong.gif\" style=\"width:260;height:260px;margin-top:5px\"></img><br><label>YODA</label><br><label>$19.99</label></div>";
-		$(".searchHolder").append(divCreator);
+			//TODO - have it display the actual item's picture (item.link)
+			var divCreator = "<div id=\"" + data.items[i]._id + "\" class=\"itemBox\"><img src=\"views/kingkong.gif\" style=\"width:140px;height:140px;margin-top:5px\"></img><br><label>" + data.items[i].name + "</label><br><label>" + data.items[i].price + "</label></div>";
+			$(".searchHolder").append(divCreator);
+			var id = data.items[i]._id;
+			$("#" + data.items[i]._id).click(function(){window.location = window.location.href.split("/")[1] + "/item?id=" + id});
 
 		}
 
 		//scale the back of the page to compensate for number of items
-		$(".searchHolder").css("height", 360 * ((data.items.length/4) + 1));
-		$("#searchBack").css("height", 490 * ((data.items.length/4) + 1));
+		$(".searchHolder").css("height", 230 * (Math.floor((data.items.length/6)) + 1));
+		$("#searchBack").css("height", 350 * (Math.floor((data.items.length/6)) + 1));
 
 		//update search list size to show user
 		$(".itemLabel").html("Search Results for " + "\"" + retID(window.location.href) + "\" -- " + data.items.length + " results");
 
-		//DUMMY ITEMS FOR TESTING PURPOSES
-		// var divCreator = "<div onclick=\"goToItemPage\" class=\"itemBox\"><img src=\"views/kingkong.gif\" style=\"width:260;height:260px;margin-top:5px\"></img><br><label>YODA</label><br><label>$19.99</label></div>";
-		// $(".searchHolder").append(divCreator);
-		// $(".searchHolder").append(divCreator);
-		// $(".searchHolder").append(divCreator);
-		// $(".searchHolder").append(divCreator);
-		// $(".searchHolder").append(divCreator);
-		// $(".searchHolder").append(divCreator);
-		// $(".searchHolder").append(divCreator);
-		// $(".searchHolder").append(divCreator);
 	});
 	$("#logout").click(() => {
 		$.post("/logout", (data) => {
@@ -92,8 +83,4 @@ function retID(WINDOWURL)
 	var findIt = rightSide.split("query")[1];
 	var maybe = findIt.split("=")[1];
 	return maybe;
-}
-function goToItemPage() {
-	//TODO - take the data from the item that was clicked and redirect the user to that specific page
-	//have to wait for mongoose to be ready to use it
 }
