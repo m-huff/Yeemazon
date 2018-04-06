@@ -3,7 +3,7 @@ $(document).ready(function(){
 	$.get("/findItems", {keywords:retID(window.location.href)}, function(data){
 		for(var i = 0; i < data.items.length; i++) {
 
-			var divCreator = "<div id=\"" + data.items[i]._id + "\" class=\"itemBox\"><img src=\"" + data.items[i].link "\" style=\"width:140px;height:140px;margin-top:5px\"></img><br><label>" + data.items[i].name + "</label><br><label>" + data.items[i].price + "</label></div>";
+			var divCreator = "<div id=\"" + data.items[i]._id + "\" class=\"itemBox\"><img src=\"" + data.items[i].link + "\" style=\"width:140px;height:140px;margin-top:5px\"></img><br><label>$" + data.items[i].name + "</label><br><label>" + data.items[i].price + "</label></div>";
 			$(".searchHolder").append(divCreator);
 			var id = data.items[i]._id;
 			$("#" + data.items[i]._id).click(function(){window.location = window.location.href.split("/")[1] + "/item?id=" + id});
