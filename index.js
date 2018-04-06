@@ -26,5 +26,5 @@ app.use('/images', express.static('./public/images'));
 app.use(routes);
 
 
-app.listen(port);
+app.listen(startup.port);
 console.log("\n   Yeemazon server has initialized! \n      IP: " + myIP.address() + " Port: " + startup.port + "\n");
