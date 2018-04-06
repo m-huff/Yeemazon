@@ -1,8 +1,21 @@
 {
 	"port" : "3000", 
-	"link" : "mongodb://admin:admin123@ds135399.mlab.com:35399/yemazon",
-	"gmail" : "yeemazon@gmail.com", 
-	"password" : "Whynotyo", 
-	"recaptchaKey" : "6LfhUk4UAAAAAEf3g2FRVkhLt75ikTv66-iufaMW"
 	
+	"saltRounds" : 10,
+	
+	"adminName" : "admin",
+	"adminPass" : "pass",
+	"adminEmail" : "costa.vincent132@gmail.com",
+	"adminIPs" : ["::ffff:192.168.1.135",
+				  "::ffff:10.73.122.151"],
+	
+	"link" : "mongodb://admin:admin123@ds135399.mlab.com:35399/yemazon",
+	
+	"emailType" : "gmail",
+	"email" : "yeemazon@gmail.com", 
+	"password" : "Whynotyo", 
+	
+	"recaptchaKey" : "6LfhUk4UAAAAAEf3g2FRVkhLt75ikTv66-iufaMW", 
+	
+	"loginAttempts" : 5
 }

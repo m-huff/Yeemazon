@@ -1,4 +1,4 @@
-
+var myIP = require("ip");
 var express = require('express');
 var bodyParser = require('body-parser');
 
@@ -26,4 +26,4 @@ app.use(routes);
 var port = require('./startup').port;
 
 app.listen(port);
-console.log("Started Listening on Port: " + port);
+console.log("\n   Yeemazon server has initialized! \n      IP: " + myIP.address() + " Port: " + port + "\n");
