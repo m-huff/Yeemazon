@@ -22,4 +22,4 @@ let productSchema = mongoose.Schema({
 	}]
 });
 
-let Poduct = module.exports = mongoose.model('Product',productSchema);
+let Product = module.exports = mongoose.model('Product',productSchema);

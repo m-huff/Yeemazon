@@ -12,18 +12,25 @@ var bcrypt = require('bcrypt');
 const saltRounds = startup.saltRounds;
 
 const mongoose = require('mongoose');
+const ObjectID = require('mongodb').ObjectID;
 
 mongoose.connect(startup.link);
 let db = mongoose.connection;
 
 db.once('open',function(){
-	console.log("Connected to remote db.")
+	console.log("Connected to remote db.");
+	db.collection('users').findOne({username:"admin"}, (err, user) => {
+		console.log(user);
+	});
 });
 db.on('error',function(err){
 	console.log(err);
 });
 
 let Product = require('./models/product');
+let users = require('./models/user');
+
+
 
 router.get("/",handler);
 router.get("/login",handler);
@@ -78,10 +85,6 @@ router.get("/signup",function(req,res){
 	res.sendFile(__dirname + "/public/views/signup.html");
 });
 
-var UserData = new (require("./userData")) (startup.adminName, startup.adminEmail, bcrypt.hashSync(startup.adminPass, saltRounds));
-for(let i in startup.adminIPs)
-	UserData.allUsers[0].addIP(startup.adminIPs[i]);
-
 var loggers = [];
 var verificationKeys = [];
 
@@ -120,8 +123,15 @@ router.get("/verify", function(req, res){
 	for(let i=0;i<verificationKeys.length;i++)
 		if(req.query.code === verificationKeys[i][0])
 		{
-			var user = verificationKeys[i][1];
-			UserData.findReturnUser(user.getName()).addIP(verificationKeys[i][2]);
+			var newInfo = user.findOne({username:verificationKeys[i][1]}, function(err, user){
+				if(err) throw err;
+				return user;
+			})
+			newInfo.IPs.push(verificationKeys[i][2]);
+			var user = users.findOneAndUpdate({username:verificationKeys[i][1]}, newInfo, {upsert:true}, function(err, user){
+				if(err) throw err;
+				return user;
+			});
 			console.log("Correct code");
 			loggers[loggers.length] = [user, verificationKeys[i][2]];
 			return res.sendFile(__dirname + "\\public\\views\\session.html");
@@ -142,16 +152,33 @@ router.get("/getItemInfo", function(req, res){
 
 router.get("/userInfo",function(req,res){
 	console.log("Userinfo requested");
-	if(!req.session_state||req.session_state.active === false || !getUserfromIP(req))
+	if(!req.session_state||req.session_state.active === false || !userExistsFromIP(req))
 	{
 		req.session_state.reset();
 		return res.json({redirect:"/"});
 	}
-	return res.json({user:getUserfromIP(req)});
+	users.findOne({username:req.session_state.username}, (err, user) => {
+		if(err) throw err;
+		return res.json({user:user});
+	});
 
 	
 });
-
+function checkPassword(req)
+{
+	users.findOne({username:req.session_state.username}, (err, user) => {
+		if(err) throw err;
+		//console.log(bcrypt.hashSync(req.session_state.password, saltRounds) === user.password);
+		return bcrypt.compareSync(req.session_state.password, user.password);
+	});
+}
+function userExistsFromIP(req)
+{
+	var ip = getIP(req);
+	for(let i=0;i<loggers.length;i++)
+		if(loggers[i][1] === ip)
+			return true;
+}
 router.get("/login",function(req,res){
 	res.sendFile(__dirname + "/public/views/login.html");
 });
@@ -163,45 +190,48 @@ router.post("/login", loginAttempt);
 
 router.post("/signup", function(req, res){
 	var ip = getIP(req);
-	if(getUserfromIP(req) !== undefined)
+	if(userExistsFromIP(req) !== undefined)
 		return res.json({success:false, status: "You are currently logged in, please sign out first"});
+	users.findOne({username:req.body.username}, (err, user) => {
+		if(err) throw err;
+		if(user !== null)
+			return res.json({success:false, status:"Username already exists"});
+		if(!req.body.captcha)
+			return res.json({success:false, status:"Please select captcha"});
 
-	if(!req.body.captcha)
-		return res.json({success:false, status:"Please select captcha"});
+		const verify = `https://google.com/recaptcha/api/siteverify?secret=${startup.recaptchaKey}&response=${req.body.captcha}&remoteip=${ip}`;
 
-	const verify = `https://google.com/recaptcha/api/siteverify?secret=${startup.recaptchaKey}&response=${req.body.captcha}&remoteip=${ip}`;
+		request(verify, (err, response, body) => {
+			body = JSON.parse(body);
+			if(body.success !== undefined && !body.success)
+				return res.json({success:false, status:"Failed captcha"});
+		});
 
-	request(verify, (err, response, body) => {
-		body = JSON.parse(body);
-		if(body.success !== undefined && !body.success)
-			return res.json({success:false, status:"Failed captcha"});
+		var check;
+		if(check = checkForBug(req, true))
+			return check;
+
+		req.session_state.username = req.body.username;
+		req.session_state.email = req.body.email;
+		req.session_state.password = req.body.password;
+		req.session_state.active = true;
+
+		var hashed = bcrypt.hashSync(req.body.password, saltRounds);
+		var newUser = {
+			_id : new ObjectID(),
+			username : req.body.username,
+			email : req.body.email,
+			password : hashed, 
+			IPs : [ip]
+		}
+		db.collection('users').insert(newUser);
+
+		loggers[loggers.length] = [newUser, ip];
+		return res.json({redirect: "/session"});
 	});
-
-	var check;
-	if(check = checkForBug(req, true))
-		return check;
-
-	req.session_state.username = req.body.username;
-	req.session_state.email = req.body.email;
-	req.session_state.password = req.body.password;
-	req.session_state.active = true;
-
-	var hashed = bcrypt.hashSync(req.body.password, saltRounds);
-	console.log(hashed);
-	var user = UserData.addUser(req.body.username, req.body.email, hashed);
-	user.addIP(ip);
-	console.log(user.myIPs);
-
-	loggers[loggers.length] = [user, ip];
-	return res.json({redirect: "/session"});
 });
 router.post("/logout", function(req, res){
-	var ip = getIP(req);
-	var user = getUserfromIP(req);
 	req.session_state.reset();
-	for(let i=0;i<loggers.length;i++)
-		if(loggers[i][1] === ip)
-			loggers.splice(i, 1);
 	return res.json({redirect: "/"});
 });
 
@@ -211,81 +241,80 @@ function getIP(req)
      req.connection.socket.remoteAddress).split(",")[0];
 
 }
-function getUserfromIP(req)
-{
-	var ip = getIP(req);
-	var user;
-	for(let i = 0; i < loggers.length;i++)
-		if(loggers[i][1] === ip)
-			user = loggers[i][0];
-	return user;
-}
 
 function loginAttempt(req, res)
 {
-	var ip = getIP(req), user = UserData.findReturnUser(req.body.username);
+	var ip = getIP(req);
+	users.findOne({username:req.body.username}, (err, user) => {
+		if(err) throw err;
 
-	if(bannedCheck(ip))
-		return res.json({status:"Banned"});
+		if(bannedCheck(ip))
+			return res.json({status:"Banned"});
 
-	console.log("Login check for " + ip);
+		console.log("Login check for " + ip);
 
-	var check;
-	if(check = checkForBug(req))
-		return res.json(check);
+		var check;
+		if(check = checkForBug(req))
+			return res.json(check);
 
-	var status;
-	if(user)
-	{
-		status = (bcrypt.compareSync(req.body.password, user.getPassword())) ? "Success" : "Incorrect";
-	}
-	else
-		status = "Username not found";
-	if(status === "Success")
-	{
-		if(user.IPExists(ip)||req.body.username === "admin")
+		var status;
+		if(user)
 		{
-			loggers[loggers.length] = [user, ip];
-			req.session_state.username = req.body.username;
-			req.session_state.email = req.body.email;
-			req.session_state.password = req.body.password;
-			req.session_state.active = true;
-			res.json({redirect:"/session"});
-			console.log("User: " + user.username + " has logged in on IP: " + ip);
+			status = (bcrypt.compareSync(req.body.password, user.password)) ? "Success" : "Incorrect";
 		}
 		else
+			status = "Username not found";
+		if(status === "Success")
 		{
-			if(verificationExists(user.getName()))
+			var IPExistsOnUser;
+			for(let i=0;i<user.IPs.length;i++)
+				if(ip === user.IPs[i])
+					IPExistsOnUser = true;
+
+			if(IPExistsOnUser||req.body.username === "admin")
 			{
-				return res.json({status:"An email to verify your ip has already been sent"});
+				loggers[loggers.length] = [user.username, ip];
+				req.session_state.username = req.body.username;
+				req.session_state.email = req.body.email;
+				req.session_state.password = req.body.password;
+				req.session_state.active = true;
+				res.json({redirect:"/session"});
+				console.log("User: " + user.username + " has logged in on IP: " + ip);
 			}
 			else
 			{
-				var key = uuidv4();
-				verificationKeys[verificationKeys.length] = [key, user, ip];
-				console.log(req.body.ref);
+				if(verificationExists(user.getName()))
+				{
+					return res.json({status:"An email to verify your ip has already been sent"});
+				}
+				else
+				{
+					var key = uuidv4();
+					verificationKeys[verificationKeys.length] = [key, user.username, ip];
+					console.log(req.body.ref);
 
-				var link = "http://" + req.body.ref + "/verify?code=" + key;
-				const mailOptions = {
-				  from: startup.email, // sender address
-				  to: user.email, // list of receivers
-				  subject: 'IP Verification link', // Subject line
-				  html: '<a href="' + link + '">Click here  to verify</a>'// plain text body
-				};
+					var link = "http://" + req.body.ref + "/verify?code=" + key;
+					const mailOptions = {
+					  from: startup.email, // sender address
+					  to: user.email, // list of receivers
+					  subject: 'IP Verification link', // Subject line
+					  html: '<a href="' + link + '">Click here  to verify</a>'// plain text body
+					};
 
-				res.json({status:"You are accessing this account from a new IP, a verification has been sent to your email"});
-				console.log("Verification email has been sent to " + user.email + " code: " + key);
-				transporter.sendMail(mailOptions, function (err, info) {
-				   
-				});
+					res.json({status:"You are accessing this account from a new IP, a verification has been sent to your email"});
+					console.log("Verification email has been sent to " + user.email + " code: " + key);
+					transporter.sendMail(mailOptions, function (err, info) {
+					   
+					});
+				}
 			}
+			
 		}
-		
-	}
-	else if(status === "Incorrect")
-		res.json(incorrectAttempt(res, "Incorrect", ip));
-	else
-		res.json({status:status});
+		else if(status === "Incorrect")
+			res.json(incorrectAttempt(res, "Incorrect", ip));
+		else
+			res.json({status:status});
+	});
 	
 }
 function checkForBug(req, isSignup = false)
