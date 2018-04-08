@@ -70,8 +70,10 @@ function handler(req, res)
 }
 var transporter = nodemailer.createTransport({
  service: startup.emailType,
+ host: startup.host,
  auth: {
-        user: startup.gmail,
+ 		type:'login',
+        user: startup.email,
         pass: startup.password
     },
  tls: {
@@ -123,18 +125,18 @@ router.get("/verify", function(req, res){
 	for(let i=0;i<verificationKeys.length;i++)
 		if(req.query.code === verificationKeys[i][0])
 		{
-			var newInfo = user.findOne({username:verificationKeys[i][1]}, function(err, user){
+			var newInfo = users.findOne({username:verificationKeys[i][1]}, function(err, user){
 				if(err) throw err;
-				return user;
-			})
-			newInfo.IPs.push(verificationKeys[i][2]);
-			var user = users.findOneAndUpdate({username:verificationKeys[i][1]}, newInfo, {upsert:true}, function(err, user){
-				if(err) throw err;
-				return user;
+				user.IPs.push(verificationKeys[i][2]);
+				delete user._id;
+				users.findOneAndUpdate({username:user.username}, user, {upsert:true}, function(err, user2){
+					if(err) throw err;
+					console.log("Correct code");
+					loggers[loggers.length] = [user2.username, verificationKeys[i][2]];
+					return res.json({status:"IP has been verified"});
+				});
 			});
-			console.log("Correct code");
-			loggers[loggers.length] = [user, verificationKeys[i][2]];
-			return res.sendFile(__dirname + "\\public\\views\\session.html");
+			return res.json({status:"IP has been verified"});
 		}
 	return res.json({error:"Code is invalid or has expired!"});
 });
@@ -231,6 +233,10 @@ router.post("/signup", function(req, res){
 	});
 });
 router.post("/logout", function(req, res){
+	var ip = getIP(req);
+	for(let i=0;i<loggers.length;i++)
+		if(loggers[i][1] === ip)
+			loggers.splice(i,1);
 	req.session_state.reset();
 	return res.json({redirect: "/"});
 });
@@ -245,11 +251,10 @@ function getIP(req)
 function loginAttempt(req, res)
 {
 	var ip = getIP(req);
+	if(bannedCheck(ip)) return res.json({status:"Banned"});
+
 	users.findOne({username:req.body.username}, (err, user) => {
 		if(err) throw err;
-
-		if(bannedCheck(ip))
-			return res.json({status:"Banned"});
 
 		console.log("Login check for " + ip);
 
@@ -283,7 +288,7 @@ function loginAttempt(req, res)
 			}
 			else
 			{
-				if(verificationExists(user.getName()))
+				if(verificationExists(user.username))
 				{
 					return res.json({status:"An email to verify your ip has already been sent"});
 				}
@@ -304,7 +309,7 @@ function loginAttempt(req, res)
 					res.json({status:"You are accessing this account from a new IP, a verification has been sent to your email"});
 					console.log("Verification email has been sent to " + user.email + " code: " + key);
 					transporter.sendMail(mailOptions, function (err, info) {
-					   
+					   console.log(err);
 					});
 				}
 			}

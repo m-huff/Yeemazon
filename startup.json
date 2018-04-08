@@ -14,6 +14,7 @@
 	
 	"link" : "mongodb://admin:admin123@ds135399.mlab.com:35399/yemazon",
 	
+	"host" : "smtp.gmail.com",
 	"emailType" : "gmail",
 	"email" : "yeemazon@gmail.com", 
 	"password" : "Whynotyo", 
