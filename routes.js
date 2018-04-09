@@ -121,19 +121,16 @@ router.post("/addItem", function(req, res){
 	return res.json({status:"Success"});
 });
 router.post("/changeItem", function(req, res){
-
-	Product.findOne({_id:req.body._id}, (err, item) =>{
+	var item = {
+		name : req.body.name,
+		description : req.body.description,
+		price : req.body.price,
+		link : ".images",
+		keywords : req.body.keywords,
+	};
+	Product.findOneAndUpdate({_id:req.body._id}, item, {upsert:true}, (err, item) =>{
 		if(err) throw err;
-		delete item._id;
-		item.name = req.body.name;
-		item.description = req.body.description;
-		item.price = req.body.price;
-		item.link = ".images";
-		item.keywords = req.body.keywords;
-		Product.findOneAndUpdate({_id:req.body._id}, item, {upsert:true}, (err, item) =>{
-			if(err) throw err;
-			return res.json({status:"Successfully changed item"});
-		});
+		return res.json({status:"Successfully changed item"});
 	});
 });
 router.post("/deleteItem", function(req, res){
@@ -142,20 +139,22 @@ router.post("/deleteItem", function(req, res){
 	});
 });
 
+router.post("/addToCart", function(req, res){
+
+	users.update({username:req.session_state.username}, { $push: { Cart: req.body.itemID}}, (err, user) =>{
+		if(err) throw err;
+		return res.json({status:"Successful addition to cart"});
+	});
+});
+
 router.get("/verify", function(req, res){
 	for(let i=0;i<verificationKeys.length;i++)
 		if(req.query.code === verificationKeys[i][0])
 		{
-			var newInfo = users.findOne({username:verificationKeys[i][1]}, function(err, user){
+			users.update({username:verificationKeys[i][1]}, {$push: {IPs : verificationKeys[i][2]}}, function(err, user){
 				if(err) throw err;
-				user.IPs.push(verificationKeys[i][2]);
-				delete user._id;
-				users.findOneAndUpdate({username:user.username}, user, {upsert:true}, function(err, user2){
-					if(err) throw err;
-					console.log("Correct code");
-					loggers[loggers.length] = [user2.username, verificationKeys[i][2]];
-					return res.json({status:"IP has been verified"});
-				});
+				loggers[loggers.length] = [user.username, verificationKeys[i][2]];
+				return res.json({status:"IP has been verified"});
 			});
 			return res.json({status:"IP has been verified"});
 		}
@@ -188,7 +187,6 @@ function checkPassword(req)
 {
 	users.findOne({username:req.session_state.username}, (err, user) => {
 		if(err) throw err;
-		//console.log(bcrypt.hashSync(req.session_state.password, saltRounds) === user.password);
 		return bcrypt.compareSync(req.session_state.password, user.password);
 	});
 }
@@ -242,12 +240,22 @@ router.post("/signup", function(req, res){
 			username : req.body.username,
 			email : req.body.email,
 			password : hashed, 
-			IPs : [ip]
+			IPs : [ip],
+			Cart : []
 		}
 		db.collection('users').insert(newUser);
 
 		loggers[loggers.length] = [newUser, ip];
 		return res.json({redirect: "/session"});
+	});
+});
+router.get("/cartItems", function(req, res){
+	users.findOne({username : req.session_state.username}, (err, user) => {
+		if(err) throw err;
+		Product.find({_id: {$in : user.Cart}}, (err, products) => {
+			if(err) throw err;
+			return res.json({items:products});
+		});
 	});
 });
 router.post("/logout", function(req, res){
@@ -263,7 +271,6 @@ function getIP(req)
 {
 	return (req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress ||
      req.connection.socket.remoteAddress).split(",")[0];
-
 }
 
 function loginAttempt(req, res)

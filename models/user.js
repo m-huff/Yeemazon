@@ -17,6 +17,10 @@ let userSchema = mongoose.Schema({
 	IPs: [{
 		type: String,
 		require: true
+	}],
+	Cart: [{
+		type: String,
+		require: true
 	}]
 });
 

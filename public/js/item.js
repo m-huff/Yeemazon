@@ -1,3 +1,4 @@
+var id;
 $(document).ready(function(){
 	$.get("/userInfo", success);
 
@@ -7,7 +8,8 @@ $(document).ready(function(){
 		$(document).prop('title', 'Yeemazon - ' + data[0].name);
 		$("#itemPrice").html("$" + data[0].price);
 		$("#itemDesc").html(data[0].description);
-		$("#img").attr('src', data[0].link);
+		$("#holder").css("background-image", "url(" + data[0].link + ")");
+		id = data[0]._id;
 	});
 
 	$("#logout").click(() => {
@@ -20,6 +22,11 @@ $(document).ready(function(){
 	});
 	$("#catalog").click(() => {
 		window.location = window.location.href.split("/")[1] + "/session";
+	});
+	$("#addToCart").click(() => {
+		$.post("/addToCart", {itemID : id}, (data)=>{
+			alert(((data.status) ? "Item added to cart" : "Something went wrong"));
+		});
 	});
 });
 function success(data)
