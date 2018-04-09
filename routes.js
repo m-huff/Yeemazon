@@ -160,7 +160,6 @@ router.get("/verify", function(req, res){
 			users.update({username:verificationKeys[i][1]}, {$push: {IPs : verificationKeys[i][2]}}, function(err, user){
 				if(err) throw err;
 				loggers[loggers.length] = [user.username, verificationKeys[i][2]];
-				return res.json({status:"IP has been verified"});
 			});
 			return res.json({status:"IP has been verified"});
 		}
@@ -393,7 +392,7 @@ function incorrectAttempt(res, status, ip)
 function verificationExists(username)
 {
 	for(let i=0;i<verificationKeys.length;i++)
-		if(verificationKeys[i][1].getName() === username)
+		if(verificationKeys[i][1].username === username)
 			return true;
 	return false;
 }
