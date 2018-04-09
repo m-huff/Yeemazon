@@ -10,10 +10,6 @@ $(document).ready(function(){
 		window.location = window.location.href.split("/")[1] + "/session";
 	});
 
-	$("#orders").click(() => {
-		window.location = window.location.href.split("/")[1] + "/orders";
-	});
-
 	$("#cart").click(() => {
 		window.location = window.location.href.split("/")[1] + "/cart";
 	});

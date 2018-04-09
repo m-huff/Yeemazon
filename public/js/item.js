@@ -23,6 +23,9 @@ $(document).ready(function(){
 	$("#catalog").click(() => {
 		window.location = window.location.href.split("/")[1] + "/session";
 	});
+	$("#cart").click(() => {
+		window.location = window.location.href.split("/")[1] + "/cart";
+	});
 	$("#addToCart").click(() => {
 		$.post("/addToCart", {itemID : id}, (data)=>{
 			alert(((data.status) ? "Item added to cart" : "Something went wrong"));

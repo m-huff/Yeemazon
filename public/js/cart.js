@@ -14,9 +14,6 @@ $(document).ready(function(){
 		window.location = window.location.href.split("/")[1] + "/account";
 	});
 
-	$("#orders").click(() => {
-		window.location = window.location.href.split("/")[1] + "/orders";
-	});
 	$.get("/cartItems", function(data){
 		for(var i = 0; i < data.items.length; i++) {
 
@@ -32,7 +29,7 @@ $(document).ready(function(){
 		$("#ordersPageback").css("height", 350 * (Math.floor((data.items.length/6)) + 1));
 
 		//update search list size to show user
-		$(".itemLabel").html("Your cart " + data.items.length + " items");
+		$(".itemLabel").html("Your cart has " + data.items.length + " items");
 
 	});
 });

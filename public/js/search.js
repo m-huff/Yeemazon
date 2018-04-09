@@ -29,9 +29,6 @@ $(document).ready(function(){
 	$("#return").click(() => {
 		window.location = window.location.href.split("/")[1] + "/session";
 	});
-	$("#orders").click(() => {
-		window.location = window.location.href.split("/")[1] + "/orders";
-	});
 	$("#cart").click(() => {
 		window.location = window.location.href.split("/")[1] + "/cart";
 	});

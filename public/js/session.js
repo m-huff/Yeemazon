@@ -8,9 +8,6 @@ $(document).ready(function(){
 	$("#account").click(() => {
 		window.location = window.location.href.split("/")[1] + "/account";
 	});
-	$("#orders").click(() => {
-		window.location = window.location.href.split("/")[1] + "/orders";
-	});
 	$("#cart").click(() => {
 		window.location = window.location.href.split("/")[1] + "/cart";
 	});
