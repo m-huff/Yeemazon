@@ -1,8 +1,8 @@
 {
-	"https" : false,
+	"https" : true,
 
-	"port" : "3000", 
-	"httpsPort" : "3001",
+	"port" : "80", 
+	"httpsPort" : "443",
 	
 	"saltRounds" : 10,
 	

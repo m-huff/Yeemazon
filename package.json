@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "start": "node index.js"
+  },
+  "main": "index.js",
   "name": "yeemazon",
   "version": "1.0.0",
   "description": "Clone of Amazon, name inspired by Mr. Yee",

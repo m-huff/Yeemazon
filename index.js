@@ -32,21 +32,15 @@ if(startup.https === true)
 
 	var pem = require('pem');
 	pem.config({
- 	 pathOpenSSL: 'C:\\OpenSSL-Win32\\bin\\openssl'
+ 		pathOpenSSL: './openssl'
 	})
-	var ret = pem.createCertificate({days:365, selfSigned:true}, function(err, keys){
+	pem.createCertificate({days:365, selfSigned:true}, function(err, keys){
 		if(err) throw err;
-		console.log(keys);
-		return keys;
+
+		http.createServer(app).listen(startup.port);
+		https.createServer({key : keys.serviceKey, cert : keys.certificate}, app).listen(startup.httpsPort);
+		console.log("\n   Yeemazon server has initialized! \n      IP: " + myIP.address() + " HTTP Port: " + startup.port + "\n      HTTPS Port: " + startup.httpsPort);
 	});
-
-	var cred = {key : ret.serviceKey, cert : ret.certificate};
-
-	var httpServer = http.createServer(app);
-	var httpsServer = https.createServer(cred, app);
-	httpServer.listen(startup.port);
-	httpsServer.listen(startup.httpsPort);
-	console.log("\n   Yeemazon server has initialized! \n      IP: " + myIP.address() + " HTTP Port: " + startup.port + "\n      HTTPS Port: " + startup.httpsPort);
 }
 else
 {
