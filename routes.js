@@ -177,7 +177,7 @@ router.get("/getItemInfo", function(req, res){
 
 router.get("/userInfo",function(req,res){
 	console.log("Userinfo requested");
-	if(!req.session_state||req.session_state.active === false || !userExistsFromIP(req))
+	if(!req.session_state || req.session_state.active === false || !userExistsFromIP(req))
 	{
 		req.session_state.reset();
 		return res.json({redirect:"/"});
@@ -233,7 +233,7 @@ router.post("/signup", function(req, res){
 
 		var check;
 		if(check = checkForBug(req, true))
-			return check;
+			return res.json(check);
 
 		req.session_state.username = req.body.username;
 		req.session_state.email = req.body.email;
@@ -356,11 +356,12 @@ function loginAttempt(req, res)
 function checkForBug(req, isSignup = false)
 {
 	if(req.body.username.includes("<")||req.body.username.includes(">"))
-		return res.json({success:false, status:"Invalid Username"});
+		return {success:false, status:"Invalid Username"};
 	if(isSignup && (req.body.email.includes("<")||req.body.email.includes(">")))
-		return res.json({success:false, status:"Invalid email"});
+		return {success:false, status:"Invalid email"};
 	if(req.body.password.includes("<")||req.body.password.includes(">"))
-		return res.json({success:false, status:"Invalid password"});
+		return {success:false, status:"Invalid password"};
+	
 }
 function bannedCheck(ip)
 {

@@ -56,8 +56,10 @@ $(document).ready(function(){
 	});
 
 	$(document).keypress(function(e){
-      if(e.keyCode==13 && $("#search").val() && $("#search").val() !== "Search for an item")
-      $('#request').click();
+	  if($("#search").val().includes("<")||$("#search").val().includes(">")) 
+	  	return alert("Improper search please dont use < or >");
+      if(e.keyCode == 13 && $("#search").val() && $("#search").val() !== "Search for an item")
+      	$('#request').click();
 
   	  if (!($("#search").val()) || $("#search").val() == "Search for an item")
     	$('#request').prop('disabled', true);
