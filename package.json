@@ -1,12 +1,11 @@
 {
   "scripts": {
-    "start": "node index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "main": "index.js",
   "name": "yeemazon",
   "version": "1.0.0",
   "description": "Clone of Amazon, name inspired by Mr. Yee",
-  "main": "index.js",
   "dependencies": {
     "bcrypt": "^1.0.3",
     "client-sessions": "^0.8.0",
@@ -26,9 +25,6 @@
     "uuid": "^3.2.1"
   },
   "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VincentCosta6/Yeemazon.git"

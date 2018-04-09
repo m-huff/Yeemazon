@@ -52,6 +52,8 @@ router.get("/admin", function(req, res){
 	res.sendFile(__dirname + "\\public\\views\\admin.html");
 });
 router.get("/itemInfo", function(req, res){
+	if(!req.query.id || req.query.id === "")
+		return res.json({error:"Enter an ID RYAN"});
 	Product.find({_id:req.query.id},function(err,products){
 		if(err) throw err;
 		return res.json(products);
@@ -89,16 +91,14 @@ var verificationKeys = [];
 
 
 router.get("/findItems", function(req, res){
-
+	if(!req.query.keywords || req.query.keywords !== [])
 	Product.find({keywords:req.query.keywords},function(err,products){
 		if (err) throw err;
-
 		return res.json({items:products});
-		
 	});
 });
 router.get("/findItem", function(req, res){
-
+	if(!req.query.name || req.query.name !== "")
 	Product.findOne({name:req.query.name},function(err,products){
 		if (err) throw err;
 		return res.json({item:products});
@@ -108,7 +108,8 @@ router.get("/findItem", function(req, res){
 var path = require('path');
 var fs = require('fs');
 router.post("/addItem", function(req, res){
-
+	if(!req.body.name||!req.body.description||!req.body.price||!req.body.keywords)
+		return res.json({error:"Ryan stop"});
 	var newItem = {
 			_id : new ObjectID(),
 			name : req.body.name,
@@ -121,6 +122,8 @@ router.post("/addItem", function(req, res){
 	return res.json({status:"Success"});
 });
 router.post("/changeItem", function(req, res){
+	if(!req.body.name||!req.body.description||!req.body.price||!req.body.keywords||!req.body._id)
+		return res.json({error:"Ryan stop"});
 	var item = {
 		name : req.body.name,
 		description : req.body.description,
@@ -134,13 +137,16 @@ router.post("/changeItem", function(req, res){
 	});
 });
 router.post("/deleteItem", function(req, res){
+	if(!req.body._id || req.body._id == 0)
+		return res.json({error:"Ryan stop"});
 	Product.remove({_id:req.body._id}, (err) => {
 		return res.json({status:"Successfully deleted the item"});
 	});
 });
 
 router.post("/addToCart", function(req, res){
-
+	if(!req.body.itemID || req.body.itemID == 0)
+		return res.json({error:"Ryan stop"});
 	users.update({username:req.session_state.username}, { $push: { Cart: req.body.itemID}}, (err, user) =>{
 		if(err) throw err;
 		return res.json({status:"Successful addition to cart"});
