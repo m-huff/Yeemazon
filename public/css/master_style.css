@@ -46,7 +46,7 @@ h3 {font-family:"tahoma";color:#DDD;transition: .3s}
 #ordersToolbar {margin:0 auto;background: rgba(20,20,20, 0.9);width:60%;height:40px;border-radius:10px;text-align:center;display:flex;align-items:center;justify-content:space-around;position:relative;animation: flyInFromBottom 2s 1 ease;}
 #ordersPageback {margin:0 auto;background:rgba(30,30,30, 0.7);width:60%;height:500px;border-radius:10px;text-align:center;position:relative;animation: flyInFromBottom 2s 1 ease;}
 
-.orderHolder {width:100%;height:400px;background-color:#000;opacity:0.5;margin:0 auto;text-align:center;}
+.orderHolder {width:100%;height:400px;background-color:rgba(0,0,0,0.5);margin:0 auto;text-align:center;display: flex;flex-direction: row;justify-content:flex-start;flex-wrap:wrap;}
 
 /*ITEM ELEMENTS STYLE*/
 
