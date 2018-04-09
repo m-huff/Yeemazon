@@ -3,11 +3,11 @@ $(document).ready(function(){
 
 	var id = retID(window.location.href);
 	$.get("/itemInfo", {id:id},(data) => {
-		$("#name").html(data[0].name);
+		$("#name").html(data[0].name + " \"ID: " + data[0]._id + "\"");
 		$(document).prop('title', 'Yeemazon - ' + data[0].name);
 		$("#itemPrice").html("$" + data[0].price);
 		$("#itemDesc").html(data[0].description);
-		$("#itemID").html("Item ID: " + data[0]._id);
+		$("#img").attr('src', data[0].link);
 	});
 
 	$("#logout").click(() => {
@@ -17,6 +17,9 @@ $(document).ready(function(){
 	});
 	$("#account").click(() => {
 		window.location = window.location.href.split("/")[1] + "/account";
+	});
+	$("#catalog").click(() => {
+		window.location = window.location.href.split("/")[1] + "/session";
 	});
 });
 function success(data)
