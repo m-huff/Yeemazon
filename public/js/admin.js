@@ -12,11 +12,10 @@ $(document).ready(function(){
 
 	//check that all text fields are filled out and send info to routes to add item
 	$("#add").click(() => {
-		if ($("#name").val() && $("#id").val() && $("#desc").val() && $("#price").val() && $("#link").val() && 
-		$("#name").val()!=="Item Name" && $("#id").val()!=="Item ID" && $("#desc").val()!=="Item Description" &&
-        $("#link").val()!=="Item Picture Link" && $("#price").val()!=="Item Price") {
+		if ($("#name").val() && $("#id").val() === "Item ID" && $("#desc").val() && $("#price").val() && 
+		$("#name").val()!=="Item Name" && $("#desc").val()!=="Item Description") {
         	//TODO -- add /addItem to routes
-			$.post("/addItem", {name:$("#name").val(),_id:$("#id").val(),price:$("#price").val(),link:$("#link").val(),desc:$("#desc").val()}
+			$.post("/addItem", {name:$("#name").val(),_id:$("#id").val(),price:$("#price").val(),link:$("#link").val(),description:$("#desc").val(), keywords : $("#key").val().split(" ")}
 			,function(data){if(data.error)alert("ERROR: Item not added, please try again"); else alert("Item successfully added")});
 		} else {
 			alert("Form filled out incorrectly, please check your data");
@@ -25,11 +24,11 @@ $(document).ready(function(){
 
 	//check that all text fields are filled out and send info to routes to change item
 	$("#change").click(() => {
-		if($("#name").val() && $("#id").val() && $("#desc").val() && $("#price").val() && $("#link").val() && 
+		if($("#name").val() && $("#id").val() && $("#desc").val() && $("#price").val() && 
 		$("#name").val()!=="Item Name" && $("#id").val()!=="Item ID" && $("#desc").val()!=="Item Description" &&
-        $("#link").val()!=="Item Picture Link" && $("#price").val()!=="Item Price") {
+        $("#price").val()!=="Item Price" && $("key").val() !== "Key Words" && $("#key").val()) {
 			//TODO -- add /addItem to routes
-			$.post("/changeItem", {name:$("#name").val(),_id:$("#id").val(),price:$("#price").val(),link:$("#link").val(),desc:$("#desc").val()},
+			$.post("/changeItem", {name:$("#name").val(),_id:$("#id").val(),price:$("#price").val(),link:$("#link").val(),description:$("#desc").val(), keywords : $("#key").val().split(" ")},
 			function(data){if(data.error)alert("ERROR: Item not changed, please check data and try again"); else alert("Item successfully changed")});
 		} else {
 			alert("Form filled out incorrectly, please check your data");
@@ -47,7 +46,7 @@ $(document).ready(function(){
 
 	$(".loginInput").focus( function() {
         if ( $(this).val()=="Item Name" || $(this).val()=="Item ID" || $(this).val()=="Item Description" ||
-        $(this).val()=="Item Picture Link" || $(this).val()=="Item Price") {
+        $(this).val()=="Item Picture Link" || $(this).val()=="Item Price" || $(this).val()=="Key Words") {
             $(this).val('');
         } 
     });
@@ -79,6 +78,11 @@ $(document).ready(function(){
         if ( $(this).val()=="") {
             $(this).val('Item Price');
         } 
+    });
+	$("#key").blur( function() {
+	    if ( $(this).val()=="") {
+	        $(this).val('Key Words');
+	    } 
     });
 });
 var username, password;

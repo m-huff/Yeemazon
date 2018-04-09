@@ -53,10 +53,7 @@ router.get("/admin", function(req, res){
 });
 router.get("/itemInfo", function(req, res){
 	Product.find({_id:req.query.id},function(err,products){
-		if (err) {
-			console.log(err);
-			return err;
-		}
+		if(err) throw err;
 		return res.json(products);
 	});
 });
@@ -94,7 +91,7 @@ var verificationKeys = [];
 router.get("/findItems", function(req, res){
 
 	Product.find({keywords:req.query.keywords},function(err,products){
-		if (err) {console.log(err);return err;}
+		if (err) throw err;
 
 		return res.json({items:products});
 		
@@ -103,22 +100,46 @@ router.get("/findItems", function(req, res){
 router.get("/findItem", function(req, res){
 
 	Product.findOne({name:req.query.name},function(err,products){
-		if (err) {console.log(err);return err;}
+		if (err) throw err;
 		return res.json({item:products});
 	});
 });
 
+var path = require('path');
+var fs = require('fs');
 router.post("/addItem", function(req, res){
-	//add an item to mongodb
-	//return error:true or error:false in a json object
+
+	var newItem = {
+			_id : new ObjectID(),
+			name : req.body.name,
+			description : req.body.description,
+			price : req.body.price,
+			link : "images/",
+			keywords : req.body.keywords
+		}
+	db.collection('products').insert(newItem);
+	return res.json({status:"Success"});
 });
 router.post("/changeItem", function(req, res){
-	//change an item in mongodb
-	//return error:true or error:false in a json object
+
+	Product.findOne({_id:req.body._id}, (err, item) =>{
+		if(err) throw err;
+		delete item._id;
+		item.name = req.body.name;
+		item.description = req.body.description;
+		item.price = req.body.price;
+		item.link = ".images";
+		item.keywords = req.body.keywords;
+		Product.findOneAndUpdate({_id:req.body._id}, item, {upsert:true}, (err, item) =>{
+			if(err) throw err;
+			return res.json({status:"Successfully changed item"});
+		});
+	});
 });
 router.post("/deleteItem", function(req, res){
-	//remove an item from mongodb
-	//return error:true or error:false in a json object
+	Product.remove({_id:req.body._id}, (err) => {
+		return res.json({status:"Successfully deleted the item"});
+	});
 });
 
 router.get("/verify", function(req, res){
@@ -144,10 +165,7 @@ router.get("/verify", function(req, res){
 router.get("/getItemInfo", function(req, res){
 
 	Product.find({_id:req.query.itemID},function(err,products){
-		if(err){
-			console.log(err);
-			return;
-		}
+		if(err) throw err;
 		return res.json({item:products});
 	});
 });

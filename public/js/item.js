@@ -7,7 +7,7 @@ $(document).ready(function(){
 		$(document).prop('title', 'Yeemazon - ' + data[0].name);
 		$("#itemPrice").html("$" + data[0].price);
 		$("#itemDesc").html(data[0].description);
-		$("#itemDesc").html(data[0].description);
+		$("#itemID").html("Item ID: " + data[0]._id);
 	});
 
 	$("#logout").click(() => {
