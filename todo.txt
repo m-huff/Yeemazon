@@ -7,12 +7,23 @@ Secret-Key: 6LfhUk4UAAAAAEf3g2FRVkhLt75ikTv66-iufaMW
 
 Image path format: "images/IMAGE.PNG"
 
-Still need to be finished as of 4/5/18:
+Still need to be finished as of 4/9/2018
 
-1. Finish admin permissions in routes.js (only need the post requests to mongoDB)
+-Ordering: Order the items in your cart, and show the total cost of the order
 
-2. Allowing upload of pictures in admin actions
+-Cart:
+  -Removing items from your cart
 
-3. Adding keywords "popular", "under20", and "yee" to populate browse page (in mongoDB)
+  -Quantity of an item in your cart
 
-4. Adding more items with images (25 to 30, in mongoDB)
+-Items:
+  -Uploading images for products you post
+
+  -Add the creator of an item with contact information like their email
+
+  -Add number of clicks to the item page
+
+  -Add number of unique clicks to item page
+
+-HTML:
+  -Add IP Verification status html page

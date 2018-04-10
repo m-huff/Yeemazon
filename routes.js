@@ -4,69 +4,37 @@ var router = express.Router();
 var startup = require('./startup');
 
 const request = require('request');
-var clientSessions = require('client-sessions');
+const clientSessions = require('client-sessions');
 const uuidv4 = require('uuid/v4');
-var nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');
 
-var bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 const saltRounds = startup.saltRounds;
 
 const mongoose = require('mongoose');
 const ObjectID = require('mongodb').ObjectID;
+const path = require('path');
+const fs = require('fs');
 
 mongoose.connect(startup.link);
 let db = mongoose.connection;
+let Product = require('./models/product');
+let users = require('./models/user');
 
 db.once('open',function(){
 	console.log("Connected to remote db.");
-	db.collection('users').findOne({username:"admin"}, (err, user) => {
-		console.log(user);
+
+	users.count({}, (err, count) => {
+		console.log("Number of users: " + count);
+	});
+	Product.count({}, (err, count) => {
+		console.log("Number of products: " + count);
 	});
 });
 db.on('error',function(err){
 	console.log(err);
 });
 
-let Product = require('./models/product');
-let users = require('./models/user');
-
-
-
-router.get("/",handler);
-router.get("/login",handler);
-router.get("/session",handler);
-
-router.get("/account", function(req, res){
-	res.sendFile(__dirname + "\\public\\views\\account.html");
-});
-router.get("/item", function(req, res){
-	res.sendFile(__dirname + "\\public\\views\\item.html");
-});
-router.get("/cart", function(req, res){
-	res.sendFile(__dirname + "\\public\\views\\cart.html");
-});
-router.get("/orders", function(req, res){
-	res.sendFile(__dirname + "\\public\\views\\orders.html");
-});
-router.get("/admin", function(req, res){
-	res.sendFile(__dirname + "\\public\\views\\admin.html");
-});
-router.get("/itemInfo", function(req, res){
-	if(!req.query.id || req.query.id === "")
-		return res.json({error:"Enter an ID RYAN"});
-	Product.find({_id:req.query.id},function(err,products){
-		if(err) throw err;
-		return res.json(products);
-	});
-});
-router.get("/search", function(req, res){
-	res.sendFile(__dirname + "\\public\\views\\search.html");
-});
-
-function handler(req, res)
-{
-	res.sendFile(__dirname + ("\\public\\views\\" + ((req.session_state.active) ? "session.html" : "login.html")));
-}
 var transporter = nodemailer.createTransport({
  service: startup.emailType,
  host: startup.host,
@@ -80,23 +48,40 @@ var transporter = nodemailer.createTransport({
 	},
 	port: 465,
 	secure:true
-
-});
-router.get("/signup",function(req,res){
-	res.sendFile(__dirname + "/public/views/signup.html");
 });
 
 var loggers = [];
 var verificationKeys = [];
+var tryers = [];
+var banned = [];
 
 
-router.get("/findItems", function(req, res){
-	if(!req.query.keywords || req.query.keywords !== [])
-	Product.find({keywords:req.query.keywords},function(err,products){
-		if (err) throw err;
-		return res.json({items:products});
+/////////////////////GETTERS////////////////////////////////////////////////////////
+router.get("/",handler);
+router.get("/login",handler);
+router.get("/session",handler);
+
+function handler(req, res){
+	res.sendFile(__dirname + ("\\public\\views\\" + ((req.session_state.active) ? "session.html" : "login.html")));
+}
+
+var getters = ["account", "item", "cart", "orders", "admin", "search", "signup", "login"];
+
+for(var i in getters)
+	router.get("/" + getters[i], function(req, res){
+		res.sendFile(__dirname + "\\public\\views\\" + getters[i] + ".html");
+	});
+
+
+router.get("/itemInfo", function(req, res){
+	if(!req.query.id || req.query.id === "")
+		return res.json({error:"Enter an ID RYAN"});
+	Product.find({_id:req.query.id},function(err,products){
+		if(err) throw err;
+		return res.json(products);
 	});
 });
+
 router.get("/findItem", function(req, res){
 	if(!req.query.name || req.query.name !== "")
 	Product.findOne({name:req.query.name},function(err,products){
@@ -105,53 +90,45 @@ router.get("/findItem", function(req, res){
 	});
 });
 
-var path = require('path');
-var fs = require('fs');
-router.post("/addItem", function(req, res){
-	if(!req.body.name||!req.body.description||!req.body.price||!req.body.keywords)
-		return res.json({error:"Ryan stop"});
-	var newItem = {
-			_id : new ObjectID(),
-			name : req.body.name,
-			description : req.body.description,
-			price : req.body.price,
-			link : "images/",
-			keywords : req.body.keywords
-		}
-	db.collection('products').insert(newItem);
-	return res.json({status:"Success"});
-});
-router.post("/changeItem", function(req, res){
-	if(!req.body.name||!req.body.description||!req.body.price||!req.body.keywords||!req.body._id)
-		return res.json({error:"Ryan stop"});
-	var item = {
-		name : req.body.name,
-		description : req.body.description,
-		price : req.body.price,
-		link : ".images",
-		keywords : req.body.keywords,
-	};
-	Product.findOneAndUpdate({_id:req.body._id}, item, {upsert:true}, (err, item) =>{
-		if(err) throw err;
-		return res.json({status:"Successfully changed item"});
-	});
-});
-router.post("/deleteItem", function(req, res){
-	if(!req.body._id || req.body._id == 0)
-		return res.json({error:"Ryan stop"});
-	Product.remove({_id:req.body._id}, (err) => {
-		return res.json({status:"Successfully deleted the item"});
+router.get("/findItems", function(req, res){
+	if(!req.query.keywords || req.query.keywords !== [])
+	Product.find({keywords:req.query.keywords},function(err,products){
+		if (err) throw err;
+		return res.json({items:products});
 	});
 });
 
-router.post("/addToCart", function(req, res){
-	if(!req.body.itemID || req.body.itemID == 0)
-		return res.json({error:"Ryan stop"});
-	users.update({username:req.session_state.username}, { $push: { Cart: req.body.itemID}}, (err, user) =>{
+router.get("/getItemInfo", function(req, res){
+
+	Product.find({_id:req.query.itemID},function(err,products){
 		if(err) throw err;
-		return res.json({status:"Successful addition to cart"});
+		return res.json({item:products});
 	});
 });
+
+
+router.get("/userInfo",function(req,res){
+	console.log("Userinfo requested");
+	if(!req.session_state || req.session_state.active === false || !userExistsFromIP(req)) {
+		req.session_state.reset();
+		return res.json({redirect:"/"});
+	}
+	users.findOne({username:req.session_state.username}, (err, user) => {
+		if(err) throw err;
+		return res.json({user:user});
+	});
+});
+
+router.get("/cartItems", function(req, res){
+	users.findOne({username : req.session_state.username}, (err, user) => {
+		if(err) throw err;
+		Product.find({_id: {$in : user.Cart}}, (err, products) => {
+			if(err) throw err;
+			return res.json({items:products});
+		});
+	});
+});
+
 
 router.get("/verify", function(req, res){
 	for(let i=0;i<verificationKeys.length;i++)
@@ -166,50 +143,12 @@ router.get("/verify", function(req, res){
 	return res.json({error:"Code is invalid or has expired!"});
 });
 
-router.get("/getItemInfo", function(req, res){
 
-	Product.find({_id:req.query.itemID},function(err,products){
-		if(err) throw err;
-		return res.json({item:products});
-	});
-});
+	////////////////////END OF GETTERS/////////////////////////////////////////////////////////////////////////////
 
-router.get("/userInfo",function(req,res){
-	console.log("Userinfo requested");
-	if(!req.session_state || req.session_state.active === false || !userExistsFromIP(req))
-	{
-		req.session_state.reset();
-		return res.json({redirect:"/"});
-	}
-	users.findOne({username:req.session_state.username}, (err, user) => {
-		if(err) throw err;
-		return res.json({user:user});
-	});
 
-	
-});
-function checkPassword(req)
-{
-	users.findOne({username:req.session_state.username}, (err, user) => {
-		if(err) throw err;
-		return bcrypt.compareSync(req.session_state.password, user.password);
-	});
-}
-function userExistsFromIP(req)
-{
-	var ip = getIP(req);
-	for(let i=0;i<loggers.length;i++)
-		if(loggers[i][1] === ip)
-			return true;
-}
-router.get("/login",function(req,res){
-	res.sendFile(__dirname + "/public/views/login.html");
-});
-
-var tryers = [];
-var banned = [];
+//////////////////////POST REQUESTS////////////////////////////////////////////////////////////////////////////
 router.post("/login", loginAttempt);
-
 
 router.post("/signup", function(req, res){
 	var ip = getIP(req);
@@ -244,7 +183,7 @@ router.post("/signup", function(req, res){
 			_id : new ObjectID(),
 			username : req.body.username,
 			email : req.body.email,
-			password : hashed, 
+			password : hashed,
 			IPs : [ip],
 			Cart : []
 		}
@@ -254,15 +193,7 @@ router.post("/signup", function(req, res){
 		return res.json({redirect: "/session"});
 	});
 });
-router.get("/cartItems", function(req, res){
-	users.findOne({username : req.session_state.username}, (err, user) => {
-		if(err) throw err;
-		Product.find({_id: {$in : user.Cart}}, (err, products) => {
-			if(err) throw err;
-			return res.json({items:products});
-		});
-	});
-});
+
 router.post("/logout", function(req, res){
 	var ip = getIP(req);
 	for(let i=0;i<loggers.length;i++)
@@ -272,14 +203,91 @@ router.post("/logout", function(req, res){
 	return res.json({redirect: "/"});
 });
 
-function getIP(req)
-{
+
+router.post("/addItem", function(req, res) {
+	if(!req.body.name||!req.body.description||!req.body.price||!req.body.keywords)
+		return res.json({error:"Ryan stop"});
+	var newItem = {
+			_id : new ObjectID(),
+			name : req.body.name,
+			description : req.body.description,
+			price : req.body.price,
+			link : "images/",
+			keywords : req.body.keywords
+		}
+	db.collection('products').insert(newItem);
+	return res.json({status:"Success"});
+});
+
+router.post("/changeItem", function(req, res) {
+	if(!req.body.name||!req.body.description||!req.body.price||!req.body.keywords||!req.body._id)
+		return res.json({error:"Ryan stop"});
+	var item = {
+		name : req.body.name,
+		description : req.body.description,
+		price : req.body.price,
+		link : ".images",
+		keywords : req.body.keywords,
+	};
+	Product.findOneAndUpdate({_id:req.body._id}, item, {upsert:true}, (err, item) => {
+		if(err) throw err;
+		return res.json({status:"Successfully changed item"});
+	});
+});
+
+router.post("/deleteItem", function(req, res) {
+	if(!req.body._id || req.body._id == 0)
+		return res.json({error:"Ryan stop"});
+	Product.remove({_id:req.body._id}, (err) => {
+		return res.json({status:"Successfully deleted the item"});
+	});
+});
+
+
+router.post("/addToCart", function(req, res) {
+	if(!req.body.itemID || req.body.itemID == 0)
+		return res.json({error:"Ryan stop"});
+	users.update({username:req.session_state.username}, { $push: { Cart: req.body.itemID}}, (err, user) =>{
+		if(err) throw err;
+		return res.json({status:"Successful addition to cart"});
+	});
+});
+
+
+//////////////////////////END OF POST REQUESTS//////////////////////////////
+
+
+////////////////////SPECIAL FUNCTIONS///////////////////////////////////////////////////////
+
+
+
+
+
+
+function getIP(req) {
 	return (req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress ||
      req.connection.socket.remoteAddress).split(",")[0];
 }
 
-function loginAttempt(req, res)
-{
+
+function checkForBug(req, isSignup = false) {
+	if(req.body.username.includes("<")||req.body.username.includes(">"))
+		return {success:false, status:"Invalid Username"};
+	if(isSignup && (req.body.email.includes("<")||req.body.email.includes(">")))
+		return {success:false, status:"Invalid email"};
+	if(req.body.password.includes("<")||req.body.password.includes(">"))
+		return {success:false, status:"Invalid password"};
+
+}
+
+function bannedCheck(ip) {
+	for (var i = 0; i < banned.length; i++)
+		if(ip === banned[i])
+			return true;
+	return false;
+}
+
+function loginAttempt(req, res) {
 	var ip = getIP(req);
 	if(bannedCheck(ip)) return res.json({status:"Banned"});
 
@@ -343,34 +351,17 @@ function loginAttempt(req, res)
 					});
 				}
 			}
-			
+
 		}
 		else if(status === "Incorrect")
 			res.json(incorrectAttempt(res, "Incorrect", ip));
 		else
 			res.json({status:status});
 	});
-	
+
 }
-function checkForBug(req, isSignup = false)
-{
-	if(req.body.username.includes("<")||req.body.username.includes(">"))
-		return {success:false, status:"Invalid Username"};
-	if(isSignup && (req.body.email.includes("<")||req.body.email.includes(">")))
-		return {success:false, status:"Invalid email"};
-	if(req.body.password.includes("<")||req.body.password.includes(">"))
-		return {success:false, status:"Invalid password"};
-	
-}
-function bannedCheck(ip)
-{
-	for (var i = 0; i < banned.length; i++) 
-		if(ip === banned[i])
-			return true;
-	return false;
-}
-function incorrectAttempt(res, status, ip)
-{
+
+function incorrectAttempt(res, status, ip) {
 	var found = false, index = 0;
 	for(let i=0;i<tryers.length;i++)
 		if(ip===tryers[i][0])
@@ -379,7 +370,7 @@ function incorrectAttempt(res, status, ip)
 				tryers[i][1]--;
 			else {
 				console.log("Login attempts reached for " + ip);
-				banned[banned.length] = ip;
+				banned.push(ip);
 				return {status:"Locked out"};
 			}
 			found = true;
@@ -389,19 +380,32 @@ function incorrectAttempt(res, status, ip)
 	var remaining = (found) ? tryers[index][1] : (tryers[tryers.length] = [ip, startup.loginAttempts])[1];
 	return {status:status, attempts:remaining};
 }
-function verificationExists(username)
-{
+
+function checkPassword(req) {
+	users.findOne({username:req.session_state.username}, (err, user) => {
+		if(err) throw err;
+		return bcrypt.compareSync(req.session_state.password, user.password);
+	});
+}
+
+
+function verificationExists(username) {
 	for(let i=0;i<verificationKeys.length;i++)
 		if(verificationKeys[i][1].username === username)
 			return true;
 	return false;
 }
 
+function userExistsFromIP(req) {
+	var ip = getIP(req);
+	for(let i=0;i<loggers.length;i++)
+		if(loggers[i][1] === ip)
+			return true;
+}
 
-
+////////////////////////END OF FUNCTIONS///////////////////////////////////////////////////////
 
 
 
 
 module.exports = router;
-
