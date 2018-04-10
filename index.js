@@ -30,21 +30,18 @@ if(startup.https === true)
 	var http = require('http');
 	var https = require('https');
 
-	var pem = require('pem');
-	pem.config({
- 		pathOpenSSL: './openssl'
-	})
-	pem.createCertificate({days:365, selfSigned:true}, function(err, keys){
-		if(err) throw err;
+  var fs = require('fs');
+  var options = {
+    key: fs.readFileSync('./ssl/key.pem'),
+    cert: fs.readFileSync('./ssl/cert.pem')
+  };
 
-		http.createServer(app).listen(startup.port);
-		https.createServer({key : keys.serviceKey, cert : keys.certificate}, app).listen(startup.httpsPort);
-		console.log("\n   Yeemazon server has initialized! \n      IP: " + myIP.address() + " HTTP Port: " + startup.port + "\n      HTTPS Port: " + startup.httpsPort);
-	});
+	http.createServer(app).listen(startup.port);
+	https.createServer(options, app).listen(startup.httpsPort);
+	console.log("\n   Yeemazon server has initialized! \n      IP: " + myIP.address() + " HTTP Port: " + startup.port + "\n      HTTPS Port: " + startup.httpsPort);
 }
 else
 {
 	app.listen(startup.port);
-	console.log("\n   Yeemazon server has initialized! \n      IP: " + myIP.address() + " Port: " + startup.port + "\n      HTTPS Port: DISABLED");
+	console.log("\n   Yeemazon server has initialized! \n      IP: " + myIP.address() + " Port: " + startup.port + "\n      HTTPS Port: DISABLED\n");
 }
-

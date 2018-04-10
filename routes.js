@@ -253,6 +253,71 @@ router.post("/addToCart", function(req, res) {
 	});
 });
 
+router.post("/removeFromCart", function(req, res) {
+	if(!req.body.itemID || req.body.itemID == 0)
+		return res.json({error:"Ryan stop"});
+	users.update({username:req.session_state.username}, { $pull: { Cart: req.body.itemID}}, (err, user) =>{
+		if(err) throw err;
+		return res.json({status:"Successful addition to cart"});
+	});
+});
+
+router.post("/itemClicked", function(req, res) {
+	if(!req.body.itemID || req.body.itemID == 0)
+		return res.json({error:"Ryan stop"});
+	Product.findOne({_id:req.body.itemID}, (err, product) => {
+			product.clicks++;
+			var found = false;
+			for(var i in product.usersClicked)
+				if(req.session_state.username === product.usersClicked[i])
+				{
+					found = true;
+					break;
+				}
+			if(!found)
+			{
+				product.uniqueClicks++;
+				product.usersClicked.push(req.session_state.username);
+			}
+			product.save((err) => {
+				if(err) throw err;
+			});
+		});
+	});
+
+router.post("/sendEmail", function(req, res) {
+	if(!req.body.itemID || req.body.itemID == 0)
+		return res.json({error:"Ryan stop"});
+	users.findOne({username:req.session_state.username}, (err, user) => {
+		if(err) throw err;
+
+		var newTransport = nodemailer.createTransport({
+		 service: startup.emailType,
+		 host: startup.host,
+		 auth: {
+		 		type:'login',
+		        user: user.email,
+		        pass: req.body.emailPass
+		    },
+		 tls: {
+		    	rejectUnauthorized: false
+			},
+			port: 465,
+			secure:true
+		});
+		const newMailOptions = {
+			from: user.email // sender address
+			to: req.body.emails, // list of receivers
+			subject: req.body.subject, // Subject line
+			html: '<h3>' + req,body.content + '</h3>'// plain text body
+		};
+		newTransport.sendMail(newMailOptions, function (err, info) {
+			 console.log(err);
+		});
+	});
+
+	});
+
 
 //////////////////////////END OF POST REQUESTS//////////////////////////////
 

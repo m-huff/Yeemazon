@@ -1,5 +1,5 @@
 {
-	"https" : false,
+	"https" : true,
 
 	"port" : "3000", 
 	"httpsPort" : "443",
