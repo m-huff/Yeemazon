@@ -306,6 +306,7 @@ router.post("/sendEmail", function(req, res) {
 
 		sendEmail(user.email, req.body.emailPass, req.body.to, req.body.subject, req.body.content);
 	});
+});
 
 
 //////////////////////////END OF POST REQUESTS//////////////////////////////
