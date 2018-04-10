@@ -53,7 +53,7 @@ $(document).ready(function(){
 	});
 
 	$(document).keypress(function(e){
-	  if($("#search").val().includes("<")||$("#search").val().includes(">")) 
+	  if($("#search").val().includes("<")||$("#search").val().includes(">"))
 	  	return alert("Improper search please dont use < or >");
       if(e.keyCode == 13 && $("#search").val() && $("#search").val() !== "Search for an item")
       	$('#request').click();
@@ -69,13 +69,13 @@ $(document).ready(function(){
     $("#search").focus( function() {
         if ( $(this).val()=="Search for an item") {
             $(this).val('');
-        } 
+        }
     });
 
     $("#search").blur( function() {
         if ( $(this).val()=="") {
             $(this).val('Search for an item');
-        } 
+        }
     });
 });
 var username, password;

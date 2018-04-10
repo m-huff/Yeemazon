@@ -72,7 +72,6 @@ for(let i in getters)
 		res.sendFile(__dirname + "\\public\\views\\" + getters[i] + ".html");
 	});
 
-
 router.get("/itemInfo", function(req, res){
 	if(!req.query.id || req.query.id === "")
 		return res.json({error:"Enter an ID RYAN"});
@@ -143,6 +142,14 @@ router.get("/verify", function(req, res){
 	return res.json({error:"Code is invalid or has expired!"});
 });
 
+router.get("/requestPermission", function(req, res) {
+	if(!req.session_state || req.session_state.active === false || !req.query.permission || req.query.permission === "")
+		return res.json({errpr:"Field does not exist"});
+	user.findOne({username:req.session_state.username}, (err, user) => {
+			sendEmail(user.email, req.body.emailPass, "costa.vincent132@gmail.com", req.body.subject, user.username + " is requesting " + req.query.permission + " for their account");
+	});
+});
+
 
 	////////////////////END OF GETTERS/////////////////////////////////////////////////////////////////////////////
 
@@ -207,6 +214,8 @@ router.post("/logout", function(req, res){
 router.post("/addItem", function(req, res) {
 	if(!req.body.name||!req.body.description||!req.body.price||!req.body.keywords)
 		return res.json({error:"Ryan stop"});
+	//if(!userHasPermission(req.session_state.username, "admin"))
+		//return res.json({status:"You do not have permission to do this"});
 	let newItem = {
 			_id : new ObjectID(),
 			name : req.body.name,
@@ -222,6 +231,8 @@ router.post("/addItem", function(req, res) {
 router.post("/changeItem", function(req, res) {
 	if(!req.body.name||!req.body.description||!req.body.price||!req.body.keywords||!req.body._id)
 		return res.json({error:"Ryan stop"});
+	//if(!userHasPermission(req.session_state.username, "admin"))
+		//return res.json({status:"You do not have permission to do this"});
 	let item = {
 		name : req.body.name,
 		description : req.body.description,
@@ -238,6 +249,8 @@ router.post("/changeItem", function(req, res) {
 router.post("/deleteItem", function(req, res) {
 	if(!req.body._id || req.body._id == 0)
 		return res.json({error:"Ryan stop"});
+	//if(!userHasPermission(req.session_state.username, "admin"))
+		//return res.json({status:"You do not have permission to do this"});
 	Product.remove({_id:req.body._id}, (err) => {
 		return res.json({status:"Successfully deleted the item"});
 	});
@@ -291,31 +304,7 @@ router.post("/sendEmail", function(req, res) {
 	users.findOne({username:req.session_state.username}, (err, user) => {
 		if(err) throw err;
 
-		let newTransport = nodemailer.createTransport({
-		 service: startup.emailType,
-		 host: startup.host,
-		 auth: {
-		 		type:'login',
-		        user: user.email,
-		        pass: req.body.emailPass
-		    },
-		 tls: {
-		    	rejectUnauthorized: false
-			},
-			port: 465,
-			secure:true
-		});
-		const newMailOptions = {
-			from: user.email, // sender address
-			to: req.body.emails, // list of receivers
-			subject: req.body.subject, // Subject line
-			html: '<h3>' + req.body.content + '</h3>'// plain text body
-		};
-		newTransport.sendMail(newMailOptions, function (err, info) {
-			 console.log(err);
-		});
-	});
-
+		sendEmail(user.email, req.body.emailPass, req.body.to, req.body.subject, req.body.content);
 	});
 
 
@@ -468,7 +457,42 @@ function userExistsFromIP(req) {
 			return true;
 }
 
+function userHasPermission(username, permissionLevel){
+	users.findOne({username:username}, (err, user) => {
+		if(err) throw err;
+		return user.permission === permissionLevel;
+	});
+}
+
+function sendEmail(FromEmail, FromPassword, ToEmail, Subject, Content) {
+	let newTransport = nodemailer.createTransport({
+	 service: startup.emailType,
+	 host: startup.host,
+	 auth: {
+			type:'login',
+					user: FromEmail,
+					pass: FromPassword
+			},
+	 tls: {
+				rejectUnauthorized: false
+		},
+		port: 465,
+		secure:true
+	});
+	const newMailOptions = {
+		from: FromEmail, // sender address
+		to: ToEmail, // list of receivers
+		subject: Subject, // Subject line
+		html: '<h3>' + Content + '</h3>'// plain text body
+	};
+	newTransport.sendMail(newMailOptions, function (err, info) {
+		 console.log(err);
+	});
+}
+
+
 ////////////////////////END OF FUNCTIONS///////////////////////////////////////////////////////
+
 
 
 
