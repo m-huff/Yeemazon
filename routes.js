@@ -1,7 +1,7 @@
 
-var express = require("express");
-var router = express.Router();
-var startup = require('./startup');
+let express = require("express");
+let router = express.Router();
+let startup = require('./startup');
 
 const request = require('request');
 const clientSessions = require('client-sessions');
@@ -35,7 +35,7 @@ db.on('error',function(err){
 	console.log(err);
 });
 
-var transporter = nodemailer.createTransport({
+let transporter = nodemailer.createTransport({
  service: startup.emailType,
  host: startup.host,
  auth: {
@@ -50,10 +50,10 @@ var transporter = nodemailer.createTransport({
 	secure:true
 });
 
-var loggers = [];
-var verificationKeys = [];
-var tryers = [];
-var banned = [];
+let loggers = [];
+let verificationKeys = [];
+let tryers = [];
+let banned = [];
 
 
 /////////////////////GETTERS////////////////////////////////////////////////////////
@@ -65,9 +65,9 @@ function handler(req, res){
 	res.sendFile(__dirname + ("\\public\\views\\" + ((req.session_state.active) ? "session.html" : "login.html")));
 }
 
-var getters = ["account", "item", "cart", "orders", "admin", "search", "signup", "login"];
+let getters = ["account", "item", "cart", "orders", "admin", "search", "signup", "login"];
 
-for(var i in getters)
+for(let i in getters)
 	router.get("/" + getters[i], function(req, res){
 		res.sendFile(__dirname + "\\public\\views\\" + getters[i] + ".html");
 	});
@@ -151,7 +151,7 @@ router.get("/verify", function(req, res){
 router.post("/login", loginAttempt);
 
 router.post("/signup", function(req, res){
-	var ip = getIP(req);
+	let ip = getIP(req);
 	if(userExistsFromIP(req) !== undefined)
 		return res.json({success:false, status: "You are currently logged in, please sign out first"});
 	users.findOne({username:req.body.username}, (err, user) => {
@@ -169,7 +169,7 @@ router.post("/signup", function(req, res){
 				return res.json({success:false, status:"Failed captcha"});
 		});
 
-		var check;
+		let check;
 		if(check = checkForBug(req, true))
 			return res.json(check);
 
@@ -178,8 +178,8 @@ router.post("/signup", function(req, res){
 		req.session_state.password = req.body.password;
 		req.session_state.active = true;
 
-		var hashed = bcrypt.hashSync(req.body.password, saltRounds);
-		var newUser = {
+		let hashed = bcrypt.hashSync(req.body.password, saltRounds);
+		let newUser = {
 			_id : new ObjectID(),
 			username : req.body.username,
 			email : req.body.email,
@@ -195,7 +195,7 @@ router.post("/signup", function(req, res){
 });
 
 router.post("/logout", function(req, res){
-	var ip = getIP(req);
+	let ip = getIP(req);
 	for(let i=0;i<loggers.length;i++)
 		if(loggers[i][1] === ip)
 			loggers.splice(i,1);
@@ -207,7 +207,7 @@ router.post("/logout", function(req, res){
 router.post("/addItem", function(req, res) {
 	if(!req.body.name||!req.body.description||!req.body.price||!req.body.keywords)
 		return res.json({error:"Ryan stop"});
-	var newItem = {
+	let newItem = {
 			_id : new ObjectID(),
 			name : req.body.name,
 			description : req.body.description,
@@ -222,7 +222,7 @@ router.post("/addItem", function(req, res) {
 router.post("/changeItem", function(req, res) {
 	if(!req.body.name||!req.body.description||!req.body.price||!req.body.keywords||!req.body._id)
 		return res.json({error:"Ryan stop"});
-	var item = {
+	let item = {
 		name : req.body.name,
 		description : req.body.description,
 		price : req.body.price,
@@ -267,8 +267,8 @@ router.post("/itemClicked", function(req, res) {
 		return res.json({error:"Ryan stop"});
 	Product.findOne({_id:req.body.itemID}, (err, product) => {
 			product.clicks++;
-			var found = false;
-			for(var i in product.usersClicked)
+			let found = false;
+			for(let i in product.usersClicked)
 				if(req.session_state.username === product.usersClicked[i])
 				{
 					found = true;
@@ -291,7 +291,7 @@ router.post("/sendEmail", function(req, res) {
 	users.findOne({username:req.session_state.username}, (err, user) => {
 		if(err) throw err;
 
-		var newTransport = nodemailer.createTransport({
+		let newTransport = nodemailer.createTransport({
 		 service: startup.emailType,
 		 host: startup.host,
 		 auth: {
@@ -306,10 +306,10 @@ router.post("/sendEmail", function(req, res) {
 			secure:true
 		});
 		const newMailOptions = {
-			from: user.email // sender address
+			from: user.email, // sender address
 			to: req.body.emails, // list of receivers
 			subject: req.body.subject, // Subject line
-			html: '<h3>' + req,body.content + '</h3>'// plain text body
+			html: '<h3>' + req.body.content + '</h3>'// plain text body
 		};
 		newTransport.sendMail(newMailOptions, function (err, info) {
 			 console.log(err);
@@ -346,14 +346,14 @@ function checkForBug(req, isSignup = false) {
 }
 
 function bannedCheck(ip) {
-	for (var i = 0; i < banned.length; i++)
+	for (let i = 0; i < banned.length; i++)
 		if(ip === banned[i])
 			return true;
 	return false;
 }
 
 function loginAttempt(req, res) {
-	var ip = getIP(req);
+	let ip = getIP(req);
 	if(bannedCheck(ip)) return res.json({status:"Banned"});
 
 	users.findOne({username:req.body.username}, (err, user) => {
@@ -361,11 +361,11 @@ function loginAttempt(req, res) {
 
 		console.log("Login check for " + ip);
 
-		var check;
+		let check;
 		if(check = checkForBug(req))
 			return res.json(check);
 
-		var status;
+		let status;
 		if(user)
 		{
 			status = (bcrypt.compareSync(req.body.password, user.password)) ? "Success" : "Incorrect";
@@ -374,7 +374,7 @@ function loginAttempt(req, res) {
 			status = "Username not found";
 		if(status === "Success")
 		{
-			var IPExistsOnUser;
+			let IPExistsOnUser = false;
 			for(let i=0;i<user.IPs.length;i++)
 				if(ip === user.IPs[i])
 					IPExistsOnUser = true;
@@ -397,11 +397,11 @@ function loginAttempt(req, res) {
 				}
 				else
 				{
-					var key = uuidv4();
+					let key = uuidv4();
 					verificationKeys[verificationKeys.length] = [key, user.username, ip];
 					console.log(req.body.ref);
 
-					var link = "http://" + req.body.ref + "/verify?code=" + key;
+					let link = "http://" + req.body.ref + "/verify?code=" + key;
 					const mailOptions = {
 					  from: startup.email, // sender address
 					  to: user.email, // list of receivers
@@ -427,7 +427,7 @@ function loginAttempt(req, res) {
 }
 
 function incorrectAttempt(res, status, ip) {
-	var found = false, index = 0;
+	let found = false, index = 0;
 	for(let i=0;i<tryers.length;i++)
 		if(ip===tryers[i][0])
 		{
@@ -442,7 +442,7 @@ function incorrectAttempt(res, status, ip) {
 			index = i;
 			break;
 		}
-	var remaining = (found) ? tryers[index][1] : (tryers[tryers.length] = [ip, startup.loginAttempts])[1];
+	let remaining = (found) ? tryers[index][1] : (tryers[tryers.length] = [ip, startup.loginAttempts])[1];
 	return {status:status, attempts:remaining};
 }
 
@@ -462,7 +462,7 @@ function verificationExists(username) {
 }
 
 function userExistsFromIP(req) {
-	var ip = getIP(req);
+	let ip = getIP(req);
 	for(let i=0;i<loggers.length;i++)
 		if(loggers[i][1] === ip)
 			return true;
