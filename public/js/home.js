@@ -1,4 +1,5 @@
 
+     //if it succeeds
      function success(data)
      {
      	if(data.message==="Error")

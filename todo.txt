@@ -5,21 +5,25 @@ Secret-Key: 6LfhUk4UAAAAAEf3g2FRVkhLt75ikTv66-iufaMW
 
 <div class="g-recaptcha" data-sitekey="6LfhUk4UAAAAACFLoT8YhRJxxtEJuamEWGQXNhfb"></div>
 
-todo by Friday 3/26/2018
-1. Fix weird undefined cookie bug //Done
+Image path format: "images/IMAGE.PNG"
 
-2. Add admin permissions //Still needed
+Still need to be finished as of 4/9/2018
 
-3. Add items and display them //Just need to display now
+-Ordering: Order the items in your cart, and show the total cost of the order
 
-4. Add an itemView html page //Still needed
+-Cart:
+  -Removing items from your cart
 
-5. Admins have a create button to add a new item to the website //Still needed
+  -Quantity of an item in your cart
 
-Thursday
+-Items:
+  -Uploading images for products you post
 
-1. Search for any bugs on the website and fix them
+  -Add the creator of an item with contact information like their email
 
-2. Test the server on a different computer and see if it works
+  -Add number of clicks to the item page
 
-3. Make sure there arent any noticable bugs
+  -Add number of unique clicks to item page
+
+-HTML:
+  -Add IP Verification status html page

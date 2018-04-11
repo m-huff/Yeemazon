@@ -1,0 +1,27 @@
+{
+	"https" : false,
+
+	"port" : "3000", 
+	"httpsPort" : "443",
+	
+	"saltRounds" : 10,
+	
+	"adminName" : "admin",
+	"adminPass" : "pass",
+	"adminEmail" : "costa.vincent132@gmail.com",
+	"adminIPs" : ["::ffff:192.168.1.135",
+				  "::ffff:10.73.122.151"],
+	
+	"link" : "mongodb://admin:admin123@ds135399.mlab.com:35399/yemazon",
+	
+	"host" : "smtp.gmail.com",
+	"emailType" : "gmail",
+	"email" : "yeemazon@gmail.com", 
+	"password" : "Whynotyo", 
+	
+	"recaptchaKey" : "6LfhUk4UAAAAAEf3g2FRVkhLt75ikTv66-iufaMW", 
+	"sessionSecret" : "dfkartuiqrq4h52o734erhsdfklghroetiuy3nty2trkgngbrt2",
+	"cookieExpirationinMS" : 86400000,
+	
+	"loginAttempts" : 5
+}

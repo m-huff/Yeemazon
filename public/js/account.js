@@ -10,10 +10,6 @@ $(document).ready(function(){
 		window.location = window.location.href.split("/")[1] + "/session";
 	});
 
-	$("#orders").click(() => {
-		window.location = window.location.href.split("/")[1] + "/orders";
-	});
-
 	$("#cart").click(() => {
 		window.location = window.location.href.split("/")[1] + "/cart";
 	});
@@ -28,5 +24,4 @@ function success(data)
 	}
 	$("#username").html("Username: " + data.user.username);
 	$("#email").html("Email: " + data.user.email); 
-	$("#password").html("Password: " + data.user.password.substr(0,10) + (data.user.password.length > 10 ? "..." : ""));
 }
