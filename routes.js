@@ -55,7 +55,6 @@ let verificationKeys = [];
 let tryers = [];
 let banned = [];
 
-
 /////////////////////GETTERS////////////////////////////////////////////////////////
 router.get("/",handler);
 router.get("/login",handler);
@@ -212,27 +211,31 @@ router.post("/logout", function(req, res){
 
 
 router.post("/addItem", function(req, res) {
-	if(!req.body.name||!req.body.description||!req.body.price||!req.body.keywords)
-		return res.json({error:"Ryan stop"});
-	//if(!userHasPermission(req.session_state.username, "admin"))
-		//return res.json({status:"You do not have permission to do this"});
-	let newItem = {
-			_id : new ObjectID(),
-			name : req.body.name,
-			description : req.body.description,
-			price : req.body.price,
-			link : "images/",
-			keywords : req.body.keywords
-		}
+
+	let bodyChecks = [req.body.name, req.body.description, req.body.price, req.body.keywords];
+
+	if(arrayItemsValid(bodyChecks)) return res.json({passed : false, reason : "Headers are invalid or not initialized"});
+
+	let check = permissionAndXSSCheck(req.session_state.username, "admin", bodyChecks);
+	if(!check.passed)	return res.json(check.reason);
+
+	let newItem = { _id : new ObjectID(), name : req.body.name, description : req.body.description, price : req.body.price, link : "images/", keywords : req.body.keywords
+
+	};
+	//if(arrayContainsXSSInjection(newItem))
 	db.collection('products').insert(newItem);
 	return res.json({status:"Success"});
 });
 
 router.post("/changeItem", function(req, res) {
-	if(!req.body.name||!req.body.description||!req.body.price||!req.body.keywords||!req.body._id)
-		return res.json({error:"Ryan stop"});
-	//if(!userHasPermission(req.session_state.username, "admin"))
-		//return res.json({status:"You do not have permission to do this"});
+
+	let bodyChecks = [req.body._id, req.body.name, req.body.description, req.body.price, req.body.keywords];
+
+	if(arrayItemsValid(bodyChecks)) return res.json({passed : false, reason : "Headers are invalid or not initialized"});
+
+	let check = permissionAndXSSCheck(req.session_state.username, "admin", bodyChecks);
+	if(!check.passed)	return res.json(check.reason);
+
 	let item = {
 		name : req.body.name,
 		description : req.body.description,
@@ -247,12 +250,16 @@ router.post("/changeItem", function(req, res) {
 });
 
 router.post("/deleteItem", function(req, res) {
-	if(!req.body._id || req.body._id == 0)
-		return res.json({error:"Ryan stop"});
-	//if(!userHasPermission(req.session_state.username, "admin"))
-		//return res.json({status:"You do not have permission to do this"});
-	Product.remove({_id:req.body._id}, (err) => {
-		return res.json({status:"Successfully deleted the item"});
+	let bodyChecks = [req.body._id];
+
+	if(arrayItemsValid(bodyChecks)) return res.json({passed : false, reason : "Headers are invalid or not initialized"});
+
+	let check = permissionAndXSSCheck(req.session_state.username, "admin", bodyChecks);
+	if(!check.passed)	return res.json(check.reason);
+
+	Product.findOneAndRemove({_id:req.body._id}, (err, item) => {
+		if(err) return res.json({passed : false, reason : "Item not found"});
+		return res.json({passed:true});
 	});
 });
 
@@ -271,7 +278,7 @@ router.post("/removeFromCart", function(req, res) {
 		return res.json({error:"Ryan stop"});
 	users.update({username:req.session_state.username}, { $pull: { Cart: req.body.itemID}}, (err, user) =>{
 		if(err) throw err;
-		return res.json({status:"Successful addition to cart"});
+		return res.json({status:"Successful removal from cart"});
 	});
 });
 
@@ -308,6 +315,16 @@ router.post("/sendEmail", function(req, res) {
 	});
 });
 
+router.post("/sendMessage", function(req, res) {
+	if(!req.body.itemID || req.body.itemID == 0)
+		return res.json({error:"Ryan stop"});
+	users.findOne({username:req.session_state.username}, (err, user) => {
+		if(err) throw err;
+
+		sendEmail(user.email, req.body.emailPass, req.body.to, req.body.subject, req.body.content);
+	});
+});
+
 
 //////////////////////////END OF POST REQUESTS//////////////////////////////
 
@@ -317,13 +334,46 @@ router.post("/sendEmail", function(req, res) {
 
 
 
+function permissionAndXSSCheck(username, permissionLevel, arrayCheck) {
+	//if(!userHasPermission(username, permissionLevel)) return {passed : false, reason : "Permission not high enough"};
 
+	if(arrayContainsXSSInjection(arrayCheck)) return {passed : false, reason : "Parameters contain XSS Injection Possibility"};
+
+	return {passed : true};
+}
+
+function arrayItemsValid(arrayCheck) {
+	let error = false;
+	for(let i = 0; (i < arrayCheck.length && !error); i++)
+		if(Array.isArray(arrayCheck[i]))
+			error = arrayItemsValid(arrayCheck[i]);
+		else if(arrayCheck[i] == "" || arrayCheck[i] == null || typeof arrayCheck[i] == 'undefined')
+			error = true;
+	return error;
+}
 
 function getIP(req) {
 	return (req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress ||
      req.connection.socket.remoteAddress).split(",")[0];
 }
 
+function containsXSSInjection(string){
+	return string.includes("<");
+}
+
+function arrayContainsXSSInjection(array) {
+	let found = false;
+	for(let i = 0; (i < array.length && !found); i++)
+		if(Array.isArray(array[i]))
+			found = requestContainsXSSInjection(array[i]);
+		else if(array[i].includes("<"))
+			found = true;
+	return found;
+}
+
+function requestContainsXSSInjection(req) {
+	return arrayContainsXSSInjection(JSON.parse(req.body));
+}
 
 function checkForBug(req, isSignup = false) {
 	if(req.body.username.includes("<")||req.body.username.includes(">"))
